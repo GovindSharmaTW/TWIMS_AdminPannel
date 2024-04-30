@@ -8,15 +8,16 @@ import SideNavBar from "./screens/SideNavBar";
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/Login" element={<LoginPage />} />
-          <Route path="/About" element={<AboutPage />} />
-          <Route path="*" element={<ErrorPage />} />
-      </Routes>
-    </BrowserRouter>
+    // <BrowserRouter>
+    //   <Routes>
+    //       <Route path="/" element={<HomePage />} />
+    //       <Route path="/Login" element={<LoginPage />} />
+    //       <Route path="/About" element={<AboutPage />} />
+    //       {/* <Route path="*" element={<ErrorPage />} /> */}
+    //   </Routes>
+    // </BrowserRouter>
     // <SideNavBar/>
+    <LoginPage/>
   );
 }
 

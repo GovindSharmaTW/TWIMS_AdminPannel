@@ -1,24 +1,10 @@
-import { Outlet, Link } from "react-router-dom";
+import './style.css'
 
 const Layout = () => {
   return (
-    <>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/Login">Login</Link>
-          </li>
-          <li>
-            <Link to="/About">About</Link>
-          </li>
-        </ul>
-      </nav>
-
-      <Outlet />
-    </>
+    <div className="image">
+      <h2>ddddd</h2>
+    </div>
   )
 };
 

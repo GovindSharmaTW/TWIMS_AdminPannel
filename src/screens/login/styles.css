@@ -1,0 +1,52 @@
+.inputBoxStyle {
+    border-width: 2;
+    width: 100%;
+}
+.LoginContainer{
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    height: 100vh;
+    width:100vw;
+    background: url('../../assets/images/inventory.jpg');
+    background-position: center;
+}
+
+.inputBoxStyle input{
+    border-color:black;
+    border-width: 1px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    padding: 10px;
+    width: 100%;
+}
+
+.baseContainer {
+    align-self: center;
+    align-content:center;
+    align-items: center;
+    justify-content:center;
+    padding: 20px;
+}
+.buttonStyle{
+    border-color:black;
+    border-width: 1px;
+    padding: 10px 50px 10px 50px;
+    width:50%;
+    align-self:center;
+    border-radius: 10px;
+    font-size: larger;
+}
+
+.linkContainer{
+    justify-content: space-between;
+    display: flex;
+    margin-bottom: 5px;
+    align-content: center;
+    align-items: center;
+}
+.buttonContainer{
+    justify-content: center;
+    display: flex;
+}

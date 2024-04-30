@@ -1,3 +1,54 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.heading{
+     color:darkblue;
+    margin-top: 50px; 
+    width: 85vw; 
+    /* border: 1px solid black; */
+    /* align-content: space-between; */
+}
+.editButton{
+    background-color:green;
+    border-radius: 10px;
+    padding: 10px;
+    margin-right: 10px;
+    color:white;
+}
+
+.deleteButton{
+    background-color:red;
+    border-radius: 10px;
+    padding: 10px;
+    color:white;
+}
+
+.tableData{
+    margin: 50px;
+}
+
+.addButton{
+    background:black;
+    color:white;
+    padding: 5px;
+    border-radius: 10px;
+    margin-left: 60px;
+}
+
+#tableNewStyle
+{
+    width :100%
+
+}
+
+#tableNewStyle{
+    align-content:'space-between';
+}
+
+#tableNewStyle td
+{
+    /* border: 1px solid black; */
+    margin: 2px;
+}

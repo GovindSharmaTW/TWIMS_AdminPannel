@@ -18,8 +18,39 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import ContactIcon from '@mui/icons-material/AccountCircle';
+import HomeIcon from '@mui/icons-material/Home';
+import ListIcon from '@mui/icons-material/List';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import LoginPage from '../login';
+import BrandNameListComponent from '../../components/BrandNameListComponent';
+import ClientListComponent from '../../components/ClientListComponent';
+import DeveloperListComponent from '../../components/DeveloperListComponent';
+import ProjectOwnerListComponent from '../../components/ProjectOwnerListComponent';
+import TableComponent from '../../components/TableComponent';
+
+// const [selectedTab, setSelectedTab] = React.useState('');
+
+// console.log("TT01 selectedTab is",selectedTab);
 
 const drawerWidth = 240;
+
+const itemTableData = [{ id: 0, item: 'Laptop' }, { id: 1, item: 'Mouse' }, { id: 2, item: 'Keyboard' }, { id: 3, item: 'Connector' }];
+const itemTableHeadingData = [{ id: 0, heading: 'S.No.' }, { id: 1, heading: 'Item Name' }];
+
+const brandTableData = [{ id: 0, name: 'HP' }, { id: 1, name: 'Avita' }, { id: 2, name: 'Dell' }, { id: 3, name: 'Appple' }, { id: 4, name: 'Lenovo' }]
+const brandTableHeadingData = [{ id: 0, heading: 'S.No.' }, { id: 1, heading: 'Brand Name' }];
+
+const clientTableData = [{ id: 0, name: 'Karigar' }, { id: 1, name: 'JMB' }, { id: 2, name: 'AutoZone' }, { id: 3, name: 'LatitudePay' }]
+const clientTableHeadingData = [{ id: 0, heading: 'S.No.' }, { id: 1, heading: 'Client Name' }];
+
+const developerTableData = [{ id: 0, name: 'Govind Sharma', email : 'govind@thoughtwin.com' }, { id: 1, name: 'Aayush Chourasiya', email : 'aayush@thoughtwin.com'}, { id: 2, name: 'Kunal Rai', email : 'kunal@thoughtwin.com' }, { id: 3, name: 'Aryan Behor', email : 'aryan@thoughtwin.com' }]
+const developerTableHeadingData = [{ id: 0, heading: 'S.No.' }, { id: 1, heading: 'Name' }, { id: 2, heading: 'Email' }];
+
+const projectOwnerTableData = [{ id: 0, name: 'Mukul Pande', email:'mukul@thoughtwin.com' }, { id: 1, name: 'Arpita', email: 'arpita@thoughtwin.com' }, { id: 2, name: 'Aksh Sharma', email:'aksh@thoughtwin.com' }]
+const projectOwnerTableHeadingData = [{ id: 0, heading: 'S.No.' }, { id: 1, heading: 'Name' }, { id: 2, heading: 'Email' }];
+
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -93,6 +124,8 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export default function SideNavBar() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [selectedTab, setSelectedTab] = React.useState('');
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -101,6 +134,8 @@ export default function SideNavBar() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  console.log("TT01 selectedTab", selectedTab);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -132,7 +167,7 @@ export default function SideNavBar() {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+          {['Home', 'Items', 'Assigned Details', 'Assign', 'Profile'].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={{
@@ -140,6 +175,8 @@ export default function SideNavBar() {
                   justifyContent: open ? 'initial' : 'center',
                   px: 2.5,
                 }}
+
+                onClick={() => setSelectedTab(text)}
               >
                 <ListItemIcon
                   sx={{
@@ -147,33 +184,15 @@ export default function SideNavBar() {
                     mr: open ? 3 : 'auto',
                     justifyContent: 'center',
                   }}
+
                 >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  {text === 'Profile' && <ContactIcon />}
+
+                  {text === 'Assigned Details' && <ListIcon />}
+                  {text === 'Home' && <HomeIcon />}
+                  {text === 'Items' && < InventoryIcon />}
+                  {text === 'Assign' && < AssignmentIcon />}
+
                 </ListItemIcon>
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
@@ -182,34 +201,22 @@ export default function SideNavBar() {
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <DrawerHeader />
-        <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-          enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-          imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus.
-          Convallis convallis tellus id interdum velit laoreet id donec ultrices.
-          Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-          adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra
-          nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum
-          leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis
-          feugiat vivamus at augue. At augue eget arcu dictum varius duis at
-          consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-          sapien faucibus et molestie ac.
-        </Typography>
-        <Typography paragraph>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper
-          eget nulla facilisi etiam dignissim diam. Pulvinar elementum integer enim
-          neque volutpat ac tincidunt. Ornare suspendisse sed nisi lacus sed viverra
-          tellus. Purus sit amet volutpat consequat mauris. Elementum eu facilisis
-          sed odio morbi. Euismod lacinia at quis risus sed vulputate odio. Morbi
-          tincidunt ornare massa eget egestas purus viverra accumsan in. In hendrerit
-          gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem
-          et tortor. Habitant morbi tristique senectus et. Adipiscing elit duis
-          tristique sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-          eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-          posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography>
+        {selectedTab === 'Home' && 'Items'}
+        {/* {selectedTab === 'Items' && <ItemTable/>} */}
+        {selectedTab === 'Assigned Details' && 'Assigned Details'}
+        {selectedTab === 'Assign' && ''}
+        {selectedTab === 'Profile' && 'Profile'}
+        
+        <div className='Heading' >
+          <TableComponent data={itemTableData} tableHeadingData = {itemTableHeadingData} showButtons ={true}/>
+          <TableComponent data={brandTableData} tableHeadingData = {brandTableHeadingData} showButtons ={true}/>
+          <TableComponent data={clientTableData} tableHeadingData = {clientTableHeadingData} showButtons ={true}/>
+          <TableComponent data={developerTableData} tableHeadingData = {developerTableHeadingData} showButtons ={true}/>
+          <TableComponent data={projectOwnerTableData} tableHeadingData = {projectOwnerTableHeadingData} showButtons ={true}/>
+        </div>
+
+        {/* <LoginPage/> */}
+       
       </Box>
     </Box>
   );
