@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './styles.css'
-import { Label } from '@mui/icons-material';
-import { Checkbox, Input } from '@mui/material';
+import inventory from '../../assets/images/inventory.jpg'
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -43,60 +42,41 @@ const LoginPage = () => {
     setAllEntry([newUser]);
 
   }
-  // console.log("email  and password is",email,password);
-  console.log("all entry data is", allEntry);
 
   return (
-    // <div>
-    //   <h2>Login Page</h2>
-    //   <input
-    //     type="text"
-    //     placeholder="Username"
-    //     value={username}
-    //     onChange={(e) => setUsername(e.target.value)}
-    //   />
-    //   <br />
-    //   <input
-    //     type="password"
-    //     placeholder="Password"
-    //     value={password}
-    //     onChange={(e) => setPassword(e.target.value)}
-    //   />
-    //   <br />
-    //   <button onClick={handleLogin}>Login</button>
-    // </div>
-    // <>
-    <div className='LoginContainer'>
-      <form action="" onSubmit={submitForm}>
-        <div className='baseContainer'>
-          <div>
-            <label>Email</label>
-            <div className="inputBoxStyle">
-              <input type="text" name='email' id='email' required onChange={(e) => setEmail(e.target.value)} placeholder='Enter Email'/>
-            </div>
+    <div className='baseContainer'>
+      <div className='primaryContainer'>
+          <img src={inventory} alt="" className="imageStyle"/>
+      </div>
+
+      <div className='secondaryContainer'>
+        <div className='mainDiv' >
+          <div className='headingContainer'>
+            <p className='headingStyle'>Log in to your account</p>
+            <p className='subHeadingStyle'>Welcome back! Please enter your details.</p>
           </div>
 
-          <div className='inputBoxContainer'>
-            <label>Password</label>
-            <div className="inputBoxStyle">
-              <input type='password' id='password' required onChange={(e) => setPassword(e.target.value)} placeholder='Enter Password'/>
-            </div>
+          <div className='inputContainer'>
+            <label className='inputLabel'>Email</label>
+            <input type="text" placeholder='Enter your email' className='inputStyle' />
           </div>
 
-          <div className='linkContainer'>
-            <label><Input type='checkBox'/> Remember me</label>
-
-            <label>Forgot Password ?</label>
-
+          <div className='inputContainer'>
+            <label className='inputLabel'>Password</label>
+            <input type="text" placeholder='Enter your password' className='inputStyle' />
           </div>
 
-          <div className='buttonContainer'>
-          <button type='submit' className='buttonStyle'>Login</button>
-            
+          <div className='textContainer' >
+            <label className='inputLabel'><input type="checkbox" className='checkBoxStyle' />Remember</label>
+            <h2 className='linkText'>Forgot password ?</h2>
+          </div>
+
+          <div className='loginButtonContainer'>
+            <button className='loginButton'>Login</button>
           </div>
 
         </div>
-      </form>
+      </div>
     </div>
   );
 };

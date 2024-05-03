@@ -17,7 +17,7 @@ export default function App() {
     //   </Routes>
     // </BrowserRouter>
     // <SideNavBar/>
-    <LoginPage/>
+    <LoginPage/>  
   );
 }
 

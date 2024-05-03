@@ -1,52 +1,109 @@
-.inputBoxStyle {
-    border-width: 2;
-    width: 100%;
-}
-.LoginContainer{
-    align-items: center;
-    align-content: center;
-    justify-content: center;
-    height: 100vh;
-    width:100vw;
-    background: url('../../assets/images/inventory.jpg');
-    background-position: center;
+.baseContainer{
+    display: flex;
 }
 
-.inputBoxStyle input{
-    border-color:black;
-    border-width: 1px;
-    margin-top: 5px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    padding: 10px;
-    width: 100%;
-}
-
-.baseContainer {
-    align-self: center;
-    align-content:center;
-    align-items: center;
-    justify-content:center;
-    padding: 20px;
-}
-.buttonStyle{
-    border-color:black;
-    border-width: 1px;
-    padding: 10px 50px 10px 50px;
-    width:50%;
-    align-self:center;
-    border-radius: 10px;
-    font-size: larger;
-}
-
-.linkContainer{
+.textContainer {
+    display: flex;
+    flex-direction: row;
     justify-content: space-between;
+}
+
+.loginButton {
+    background-color: #1366D9;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 10px;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.inputStyle {
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-width: 1px;
+}
+
+.headingContainer {
     display: flex;
-    margin-bottom: 5px;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.headingStyle {
+    font-size: 2rem;
+    color: #2B2F38;
+}
+
+.subHeadingStyle {
+    font-size: 1rem;
+    color: #667085;
+
+}
+
+.mainDiv {
+    width: 90%;
+}
+
+.inputContainer {
+    flex-direction: column;
+    display: flex;
+}
+
+.loginButtonContainer {
+    display: flex;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.secondaryContainer {
+    width: 50vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
     align-content: center;
     align-items: center;
 }
-.buttonContainer{
-    justify-content: center;
-    display: flex;
+
+.primaryContainer {
+    width: 50vw;
+    height: 100vh;
+    align-items: center;
+    align-content: center;
+}
+
+@media screen and (max-width: 550px){
+    .baseContainer{
+        display: flex;
+        flex-direction: column;
+    }
+    .primaryContainer{
+        width: 100vw;
+        height: fit-content;
+    }
+    .secondaryContainer{
+        width: 100vw;
+        height: fit-content;
+
+    }   
+}
+
+.checkBoxStyle{
+    margin-right: 10px;
+}
+.linkText{
+    color: #1366D9;
+}
+.inputLabel{
+    color: #48505E;
+}
+.imageStyle{
+    width:100%;
+    height:100%
 }
