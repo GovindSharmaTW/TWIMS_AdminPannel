@@ -29,6 +29,8 @@ import ClientListComponent from '../../components/ClientListComponent';
 import DeveloperListComponent from '../../components/DeveloperListComponent';
 import ProjectOwnerListComponent from '../../components/ProjectOwnerListComponent';
 import TableComponent from '../../components/TableComponent';
+import inventory from '../../assets/images/inventory.jpg'
+
 
 // const [selectedTab, setSelectedTab] = React.useState('');
 
@@ -39,18 +41,25 @@ const drawerWidth = 240;
 const itemTableData = [{ id: 0, item: 'Laptop' }, { id: 1, item: 'Mouse' }, { id: 2, item: 'Keyboard' }, { id: 3, item: 'Connector' }];
 const itemTableHeadingData = [{ id: 0, heading: 'S.No.' }, { id: 1, heading: 'Item Name' }];
 
-const brandTableData = [{ id: 0, name: 'HP' }, { id: 1, name: 'Avita' }, { id: 2, name: 'Dell' }, { id: 3, name: 'Appple' }, { id: 4, name: 'Lenovo' }]
+const brandTableData = [{code: '#0001', name: 'HP' }, {code: '#0002', name: 'Avita' }, {code: '#0003', name: 'Dell' }, {code: '#0004', name: 'Appple' }, {code: '#0005', name: 'Lenovo' }]
 const brandTableHeadingData = [{ id: 0, heading: 'S.No.' }, { id: 1, heading: 'Brand Name' }];
 
-const clientTableData = [{ id: 0, name: 'Karigar' }, { id: 1, name: 'JMB' }, { id: 2, name: 'AutoZone' }, { id: 3, name: 'LatitudePay' }]
+const clientTableData = [{ id: 0, name: 'Karigar', email:'karigar@gmail.com', contact:9873747433 }, { id: 1, name: 'JMB', email:'jmb@gmail.com', contact:8873747432 }, { id: 2, name: 'AutoZone', email:'autozone@gmail.com', contact:7873747431 }, { id: 3, name: 'LatitudePay', email:'latitude_pay@gmail.com', contact:9873747430 }]
 const clientTableHeadingData = [{ id: 0, heading: 'S.No.' }, { id: 1, heading: 'Client Name' }];
 
-const developerTableData = [{ id: 0, name: 'Govind Sharma', email : 'govind@thoughtwin.com' }, { id: 1, name: 'Aayush Chourasiya', email : 'aayush@thoughtwin.com'}, { id: 2, name: 'Kunal Rai', email : 'kunal@thoughtwin.com' }, { id: 3, name: 'Aryan Behor', email : 'aryan@thoughtwin.com' }]
+const developerTableData = [{ id: 0, name: 'Govind Sharma', email : 'govind@thoughtwin.com', contact:9876533566 }, { id: 1, name: 'Aayush Chourasiya', email : 'aayush@thoughtwin.com', contact:8876533567}, { id: 2, name: 'Kunal Rai', email : 'kunal@thoughtwin.com', contact:6876533565 }, { id: 3, name: 'Aryan Behor', email : 'aryan@thoughtwin.com', contact:8876533569 }]
 const developerTableHeadingData = [{ id: 0, heading: 'S.No.' }, { id: 1, heading: 'Name' }, { id: 2, heading: 'Email' }];
 
-const projectOwnerTableData = [{ id: 0, name: 'Mukul Pande', email:'mukul@thoughtwin.com' }, { id: 1, name: 'Arpita', email: 'arpita@thoughtwin.com' }, { id: 2, name: 'Aksh Sharma', email:'aksh@thoughtwin.com' }]
+const projectOwnerTableData = [{ id: 0, name: 'Mukul Pande', email:'mukul@thoughtwin.com', contact:9876533568 }, { id: 1, name: 'Arpita', email: 'arpita@thoughtwin.com', contact:8876533586 }, { id: 2, name: 'Aksh Sharma', email:'aksh@thoughtwin.com', contact:9876533569 }]
 const projectOwnerTableHeadingData = [{ id: 0, heading: 'S.No.' }, { id: 1, heading: 'Name' }, { id: 2, heading: 'Email' }];
 
+const inventoryTableData = [
+  { name: 'Macbook Pro', code: '#0001', qty: 12, image:inventory},
+  { name: 'Connector ', code: '#0002', qty: 25 , image:inventory},
+  { name: 'Mouse', code: '#0003', qty: 32 , image:inventory},
+  { name: 'Keyboard', code: '#0004', qty: 50 , image:inventory},
+  { name: 'Charger', code: '#0005', qty: 12, image:inventory }
+];
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -202,17 +211,16 @@ export default function SideNavBar() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         {selectedTab === 'Home' && 'Items'}
-        {/* {selectedTab === 'Items' && <ItemTable/>} */}
         {selectedTab === 'Assigned Details' && 'Assigned Details'}
         {selectedTab === 'Assign' && ''}
         {selectedTab === 'Profile' && 'Profile'}
         
         <div className='Heading' >
-          <TableComponent data={itemTableData} tableHeadingData = {itemTableHeadingData} showButtons ={true}/>
-          <TableComponent data={brandTableData} tableHeadingData = {brandTableHeadingData} showButtons ={true}/>
-          <TableComponent data={clientTableData} tableHeadingData = {clientTableHeadingData} showButtons ={true}/>
-          <TableComponent data={developerTableData} tableHeadingData = {developerTableHeadingData} showButtons ={true}/>
-          <TableComponent data={projectOwnerTableData} tableHeadingData = {projectOwnerTableHeadingData} showButtons ={true}/>
+          <TableComponent data={inventoryTableData} showActionButtons={true} tableTitle={'Item List'}/>
+          <TableComponent data={brandTableData} showActionButtons={true} tableTitle={'Brand List'}/>
+          <TableComponent data={clientTableData} showActionButtons={true} tableTitle={'Client List'}/>
+          <TableComponent data={projectOwnerTableData} showActionButtons={true} tableTitle={'Project-Owner List'}/>
+          <TableComponent data={developerTableData} showActionButtons={true} tableTitle={'Developer List'}/>
         </div>
 
         {/* <LoginPage/> */}

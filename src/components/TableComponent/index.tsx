@@ -1,54 +1,81 @@
 
-import '../../index.css'
+import './style.css'
+import inventory from '../../assets/images/inventory.jpg'
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useMediaQuery } from '@mui/material';
+import { useEffect, useState } from 'react';
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
 
-const TableComponent = (props) => {
-    const { data = [], tableHeadingData = [], showButtons = false } = props
+const TableComponent = (props: any) => {
+
+    const { data, showActionButtons, tableTitle } = props;
+
+    const isSmallScreen = useMediaQuery('(max-width:690px)');
+
+    const [tableHeading, setTableHeading] = useState([])
+
+    const iconSize = isSmallScreen ? 18 : 25;
+
+    useEffect(() => {
+        const dataKeys = Object.keys(data[0]);
+
+        if (showActionButtons) {
+            dataKeys.push('Actions');
+        }
+
+        setTableHeading(dataKeys);
+
+    }, [data])
 
     return (
-        <div className="heading">
-            <table id="tableNewStyle">
-                <tr>
-                    {tableHeadingData.map((item) => {
-                        return (
-                            <th>{item.heading}</th>)
-                    })}
-                </tr>
-                
-                {data.map((val, key) => {
+        <div className="tableStyle">
+
+            {tableTitle &&
+                <h1 className='tableTitle'>{tableTitle}:</h1>
+            }
+
+            <div className='tableHeadingContainer' >
+                {tableHeading.map((item: any) => {
                     return (
-                        <>
-                            <tr style={{ justifyContent: 'center' }} key={key}>
-                                {Object.keys(val).map((keys) => {
-                                    return (
-                                        <td style={{ textAlign: 'center' }}>{val[keys]}</td>
-                                    )
-                                })}
-
-                                {showButtons &&
-                                    <td style={{ display: 'flex', justifyContent: 'center' }} className=''>
-                                        <button className='editButton'>Edit</button>
-                                        <button className='deleteButton'>Delete</button>
-                                    </td>
-                                }
-                            </tr>
-                        </>
-
+                        <h1 className='tableHeading' >{item.toUpperCase()}</h1>
                     )
                 })}
+            </div>
 
-                <tr>
-                    <td style={{ textAlign: 'center' }}></td>
-                    <td style={{ textAlign: 'center' }}></td>
-                    <td style={{ textAlign: 'center' }}><button className='addButton'>Add New</button></td>
+            {data.map((val: any) => {
+                return (
+                    < div className='tableDataContainer'>
+                        {Object.keys(val)?.map((key) => {
+                            return (
+                                key !== 'image' &&
+                                <h1 className='tableData' >{val[key]}</h1>
+                            )
+                        })}
 
-                </tr>
+                        {tableHeading.includes('image') &&
+                            <div className='tableData' >
+                                <img src={inventory} alt="" className='itemImageStyle' />
+                            </div>
+                        }
 
+                        <div className='tableData' >
+                            <EditIcon sx={{ fontSize: iconSize }} className='editIcon' />
+                            <DeleteIcon sx={{ fontSize: iconSize }} className='deleteIcon' />
+                        </div>
 
-            </table>
-            {/* <div style={{width:'81%',display:'flex', justifyContent:'flex-end',}}>
-            <button className='addButton'>Add New</button>
-            </div> */}
+                    </div>
+                )
+            })}
+            <div className='addButtonContainer'>
+                <div className='addButton'>
+                    <ControlPointIcon sx={{ fontSize: iconSize }} />
+                    <p className='addButtonText'>Add More</p>
+                </div>
+            </div>
+
         </div>
+
     );
 };
 

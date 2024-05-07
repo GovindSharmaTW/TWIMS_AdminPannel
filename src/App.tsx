@@ -16,8 +16,8 @@ export default function App() {
     //       {/* <Route path="*" element={<ErrorPage />} /> */}
     //   </Routes>
     // </BrowserRouter>
-    // <SideNavBar/>
-    <LoginPage/>  
+    <SideNavBar/>
+    // <LoginPage/>  
   );
 }
 
