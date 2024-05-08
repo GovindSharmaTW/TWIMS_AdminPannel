@@ -5,6 +5,7 @@ import HomePage from "./screens/Home";
 import ErrorPage from "./screens/ErrorPage";
 import AboutPage from "./screens/About";
 import SideNavBar from "./screens/SideNavBar";
+import AssignInventoryScreen from "./screens/AssignInventoryScreen";
 
 export default function App() {
   return (
@@ -16,7 +17,8 @@ export default function App() {
     //       {/* <Route path="*" element={<ErrorPage />} /> */}
     //   </Routes>
     // </BrowserRouter>
-    <SideNavBar/>
+    // <SideNavBar/>
+    <AssignInventoryScreen/>
     // <LoginPage/>  
   );
 }
