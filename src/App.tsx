@@ -17,8 +17,8 @@ export default function App() {
     //       {/* <Route path="*" element={<ErrorPage />} /> */}
     //   </Routes>
     // </BrowserRouter>
-    // <SideNavBar/>
-    <AssignInventoryScreen/>
+    <SideNavBar/>
+    // <AssignInventoryScreen/>
     // <LoginPage/>  
   );
 }

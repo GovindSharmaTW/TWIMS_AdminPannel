@@ -9,11 +9,13 @@ import ControlPointIcon from '@mui/icons-material/ControlPoint';
 
 const TableComponent = (props: any) => {
 
-    const { data, showActionButtons, tableTitle } = props;
+    const { data, showActionButtons, tableTitle, style } = props;
 
     const isSmallScreen = useMediaQuery('(max-width:690px)');
 
     const [tableHeading, setTableHeading] = useState([])
+    const [columnWidth, setColumnWidth] = useState(10)
+
 
     const iconSize = isSmallScreen ? 18 : 25;
 
@@ -24,7 +26,10 @@ const TableComponent = (props: any) => {
             dataKeys.push('Actions');
         }
 
+        setColumnWidth(dataKeys.length/2*10)
+
         setTableHeading(dataKeys);
+
 
     }, [data])
 
@@ -49,17 +54,17 @@ const TableComponent = (props: any) => {
                         {Object.keys(val)?.map((key) => {
                             return (
                                 key !== 'image' &&
-                                <h1 className='tableData' >{val[key]}</h1>
+                                <h1 className='tableData' >{val[key].toString()}</h1>
                             )
                         })}
 
                         {tableHeading.includes('image') &&
-                            <div className='tableData' >
+                            <div className='tableData'  >
                                 <img src={inventory} alt="" className='itemImageStyle' />
                             </div>
                         }
 
-                        <div className='tableData' >
+                        <div className='tableData'>
                             <EditIcon sx={{ fontSize: iconSize }} className='editIcon' />
                             <DeleteIcon sx={{ fontSize: iconSize }} className='deleteIcon' />
                         </div>

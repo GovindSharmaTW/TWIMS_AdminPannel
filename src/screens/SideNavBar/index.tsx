@@ -16,49 +16,45 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ContactIcon from '@mui/icons-material/AccountCircle';
 import HomeIcon from '@mui/icons-material/Home';
-import ListIcon from '@mui/icons-material/List';
+import GroupsIcon from '@mui/icons-material/Groups';
+import RecentActorsIcon from '@mui/icons-material/RecentActors';
+import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import LoginPage from '../login';
-import BrandNameListComponent from '../../components/BrandNameListComponent';
-import ClientListComponent from '../../components/ClientListComponent';
-import DeveloperListComponent from '../../components/DeveloperListComponent';
-import ProjectOwnerListComponent from '../../components/ProjectOwnerListComponent';
-import TableComponent from '../../components/TableComponent';
 import inventory from '../../assets/images/inventory.jpg'
+import AssignInventoryScreen from '../AssignInventoryScreen';
+import TableComponent from '../../components/TableComponent';
 
 
-// const [selectedTab, setSelectedTab] = React.useState('');
 
-// console.log("TT01 selectedTab is",selectedTab);
 
 const drawerWidth = 240;
 
-const itemTableData = [{ id: 0, item: 'Laptop' }, { id: 1, item: 'Mouse' }, { id: 2, item: 'Keyboard' }, { id: 3, item: 'Connector' }];
-const itemTableHeadingData = [{ id: 0, heading: 'S.No.' }, { id: 1, heading: 'Item Name' }];
+const assignedInventoryData = [
+  { S_No: 0, Ass_Item: 'Laptop', brand_Name: 'Lenovo', from_client: true, pro_owner: 'Mukul Pande', developer: 'Govind Sharma', assigned_date: '05_march_2024' },
+  { S_No: 1, Ass_Item: 'Keyboard', brand_Name: 'AVITA', from_client: false, pro_owner: 'Arpita Sharma', developer: 'Aayush Chourasiya', assigned_date: '23_april_2024' },
+  { S_No: 2, Ass_Item: 'Headphone', brand_Name: 'HP', from_client: true, pro_owner: 'Mukul Pande', developer: 'kunal Rai', assigned_date: '16_jan_2024' },
+  { S_No: 3, Ass_Item: 'Connector', brand_Name: 'Potronics', from_client: false, pro_owner: 'Aksh Sharma', developer: 'Aryan Behor', assigned_date: '21_jun_2023' },
+  { S_No: 4, Ass_Item: 'Charger', brand_Name: 'Apple', from_client: true, pro_owner: 'Mukul Pande', developer: 'Shiv Jaiswal', assigned_date: '05_feb_2024' },
+];
 
-const brandTableData = [{code: '#0001', name: 'HP' }, {code: '#0002', name: 'Avita' }, {code: '#0003', name: 'Dell' }, {code: '#0004', name: 'Appple' }, {code: '#0005', name: 'Lenovo' }]
-const brandTableHeadingData = [{ id: 0, heading: 'S.No.' }, { id: 1, heading: 'Brand Name' }];
+const brandTableData = [{ code: '#0001', name: 'HP' }, { code: '#0002', name: 'Avita' }, { code: '#0003', name: 'Dell' }, { code: '#0004', name: 'Appple' }, { code: '#0005', name: 'Lenovo' }]
 
-const clientTableData = [{ id: 0, name: 'Karigar', email:'karigar@gmail.com', contact:9873747433 }, { id: 1, name: 'JMB', email:'jmb@gmail.com', contact:8873747432 }, { id: 2, name: 'AutoZone', email:'autozone@gmail.com', contact:7873747431 }, { id: 3, name: 'LatitudePay', email:'latitude_pay@gmail.com', contact:9873747430 }]
-const clientTableHeadingData = [{ id: 0, heading: 'S.No.' }, { id: 1, heading: 'Client Name' }];
+const clientTableData = [{ id: 0, name: 'Karigar', email: 'karigar@gmail.com', contact: 9873747433 }, { id: 1, name: 'JMB', email: 'jmb@gmail.com', contact: 8873747432 }, { id: 2, name: 'AutoZone', email: 'autozone@gmail.com', contact: 7873747431 }, { id: 3, name: 'LatitudePay', email: 'latitude_pay@gmail.com', contact: 9873747430 }]
 
-const developerTableData = [{ id: 0, name: 'Govind Sharma', email : 'govind@thoughtwin.com', contact:9876533566 }, { id: 1, name: 'Aayush Chourasiya', email : 'aayush@thoughtwin.com', contact:8876533567}, { id: 2, name: 'Kunal Rai', email : 'kunal@thoughtwin.com', contact:6876533565 }, { id: 3, name: 'Aryan Behor', email : 'aryan@thoughtwin.com', contact:8876533569 }]
-const developerTableHeadingData = [{ id: 0, heading: 'S.No.' }, { id: 1, heading: 'Name' }, { id: 2, heading: 'Email' }];
+const developerTableData = [{ id: 0, name: 'Govind Sharma', email: 'govind@thoughtwin.com', contact: 9876533566 }, { id: 1, name: 'Aayush Chourasiya', email: 'aayush@thoughtwin.com', contact: 8876533567 }, { id: 2, name: 'Kunal Rai', email: 'kunal@thoughtwin.com', contact: 6876533565 }, { id: 3, name: 'Aryan Behor', email: 'aryan@thoughtwin.com', contact: 8876533569 }]
 
-const projectOwnerTableData = [{ id: 0, name: 'Mukul Pande', email:'mukul@thoughtwin.com', contact:9876533568 }, { id: 1, name: 'Arpita', email: 'arpita@thoughtwin.com', contact:8876533586 }, { id: 2, name: 'Aksh Sharma', email:'aksh@thoughtwin.com', contact:9876533569 }]
-const projectOwnerTableHeadingData = [{ id: 0, heading: 'S.No.' }, { id: 1, heading: 'Name' }, { id: 2, heading: 'Email' }];
+const projectOwnerTableData = [{ id: 0, name: 'Mukul Pande', email: 'mukul@thoughtwin.com', contact: 9876533568 }, { id: 1, name: 'Arpita', email: 'arpita@thoughtwin.com', contact: 8876533586 }, { id: 2, name: 'Aksh Sharma', email: 'aksh@thoughtwin.com', contact: 9876533569 }]
 
 const inventoryTableData = [
-  { name: 'Macbook Pro', code: '#0001', qty: 12, image:inventory},
-  { name: 'Connector ', code: '#0002', qty: 25 , image:inventory},
-  { name: 'Mouse', code: '#0003', qty: 32 , image:inventory},
-  { name: 'Keyboard', code: '#0004', qty: 50 , image:inventory},
-  { name: 'Charger', code: '#0005', qty: 12, image:inventory }
+  { name: 'Macbook Pro', code: '#0001', qty: 12, image: inventory },
+  { name: 'Connector ', code: '#0002', qty: 25, image: inventory },
+  { name: 'Mouse', code: '#0003', qty: 32, image: inventory },
+  { name: 'Keyboard', code: '#0004', qty: 50, image: inventory },
+  { name: 'Charger', code: '#0005', qty: 12, image: inventory },
+  { name: 'Laptop', code: '#0006', qty: 10, image: inventory }
 ];
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -144,7 +140,6 @@ export default function SideNavBar() {
     setOpen(false);
   };
 
-  console.log("TT01 selectedTab", selectedTab);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -164,7 +159,7 @@ export default function SideNavBar() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Mini variant drawer
+           {selectedTab}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -176,7 +171,7 @@ export default function SideNavBar() {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Home', 'Items', 'Assigned Details', 'Assign', 'Profile'].map((text, index) => (
+          {['Home', 'Inventory', 'Employees', 'Assigned Inventory', 'Assign Inventory', 'Clients', 'Profile'].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={{
@@ -197,10 +192,13 @@ export default function SideNavBar() {
                 >
                   {text === 'Profile' && <ContactIcon />}
 
-                  {text === 'Assigned Details' && <ListIcon />}
+                  {text === 'Assigned Inventory' && <RecentActorsIcon />}
                   {text === 'Home' && <HomeIcon />}
-                  {text === 'Items' && < InventoryIcon />}
-                  {text === 'Assign' && < AssignmentIcon />}
+                  {text === 'Inventory' && < InventoryIcon />}
+                  {text === 'Assign Inventory' && < AssignmentIcon />}
+                  {text === 'Employees' && < SupervisedUserCircleIcon />}
+                  {text === 'Clients' && < GroupsIcon />}
+
 
                 </ListItemIcon>
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
@@ -210,21 +208,38 @@ export default function SideNavBar() {
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        {selectedTab === 'Home' && 'Items'}
-        {selectedTab === 'Assigned Details' && 'Assigned Details'}
-        {selectedTab === 'Assign' && ''}
-        {selectedTab === 'Profile' && 'Profile'}
-        
-        <div className='Heading' >
-          <TableComponent data={inventoryTableData} showActionButtons={true} tableTitle={'Item List'}/>
-          <TableComponent data={brandTableData} showActionButtons={true} tableTitle={'Brand List'}/>
-          <TableComponent data={clientTableData} showActionButtons={true} tableTitle={'Client List'}/>
-          <TableComponent data={projectOwnerTableData} showActionButtons={true} tableTitle={'Project-Owner List'}/>
-          <TableComponent data={developerTableData} showActionButtons={true} tableTitle={'Developer List'}/>
-        </div>
 
-        {/* <LoginPage/> */}
-       
+        {selectedTab === 'Home' && <p>Home screen</p>}
+
+        {selectedTab === 'Inventory' &&
+          <>
+            <TableComponent data={inventoryTableData} showActionButtons={true} tableTitle={'Item List'} />
+
+            <TableComponent data={brandTableData} showActionButtons={true} tableTitle={'Brand List'} />
+          </>
+
+        }
+
+        {selectedTab === 'Employees' &&
+          <>
+            <TableComponent data={projectOwnerTableData} showActionButtons={true} tableTitle={'Project-Owner List'} />
+            <TableComponent data={developerTableData} showActionButtons={true} tableTitle={'Developer List'} />
+          </>
+        }
+
+        {selectedTab === 'Clients' &&
+          <TableComponent data={clientTableData} showActionButtons={true} tableTitle={'Client List'} />
+        }
+
+        {selectedTab === 'Assigned Inventory' &&
+          <TableComponent data={assignedInventoryData} showActionButtons={true} tableTitle={'Assigned Inventory List'} />
+        }
+
+        {selectedTab === 'Assign Inventory' &&
+          <AssignInventoryScreen />
+        }
+
+        {selectedTab === 'Profile' && <p>Profile screen</p>}
       </Box>
     </Box>
   );
