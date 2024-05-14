@@ -1,52 +1,32 @@
 import React, { useState } from 'react';
 import './styles.css'
 import inventory from '../../assets/images/inventory.jpg'
+import { signInUser } from '../../firebase';
+import { checkIsEmpty } from '../../utils';
 
 const LoginPage = () => {
-  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [loggedIn, setLoggedIn] = useState(false);
   const [email, setEmail] = useState('');
-  const [allEntry, setAllEntry] = useState([])
 
+  console.log("email and password", email, password);
 
+  const handleSignIn = () => {
+    console.log("TT01 handleSignIn function calling");
 
-  const handleLogin = () => {
-    // Here you can add your login logic, such as sending a request to your backend
-    // to validate the username and password
-    if (username === 'yourUsername' && password === 'yourPassword') {
-      setLoggedIn(true);
-    } else {
-      alert('Invalid username or password');
+    if (!checkIsEmpty(email) && !checkIsEmpty(password)) {
+      signInUser(email, password);
     }
-  };
-
-  const handleLogout = () => {
-    setLoggedIn(false);
-  };
-
-  if (loggedIn) {
-    return (
-      <div>
-        <h2>Welcome, {username}!</h2>
-        <button onClick={handleLogout}>Logout</button>
-      </div>
-    );
-  }
-
-  const submitForm = (e: any) => {
-    e.preventDefault();
-    console.log("TT01 submitForm function called");
-    const newUser = { email: email, password: password };
-
-    setAllEntry([newUser]);
-
+    else {
+      alert('Please enter valid email and password');
+      setEmail('');
+      setPassword('');
+    }
   }
 
   return (
     <div className='baseContainer'>
       <div className='primaryContainer'>
-          <img src={inventory} alt="" className="imageStyle"/>
+        <img src={inventory} alt="" className="imageStyle" />
       </div>
 
       <div className='secondaryContainer'>
@@ -58,12 +38,12 @@ const LoginPage = () => {
 
           <div className='inputContainer'>
             <label className='inputLabel'>Email</label>
-            <input type="text" placeholder='Enter your email' className='inputStyle' />
+            <input type="text" placeholder='Enter your email' className='inputStyle' onChange={(e) => setEmail(e.target.value)} value={email} />
           </div>
 
           <div className='inputContainer'>
             <label className='inputLabel'>Password</label>
-            <input type="text" placeholder='Enter your password' className='inputStyle' />
+            <input type="text" placeholder='Enter your password' className='inputStyle' onChange={(e) => setPassword(e.target.value)} value={password} />
           </div>
 
           <div className='textContainer' >
@@ -72,7 +52,7 @@ const LoginPage = () => {
           </div>
 
           <div className='loginButtonContainer'>
-            <button className='loginButton'>Login</button>
+            <button className='loginButton' onClick={handleSignIn}>Login</button>
           </div>
 
         </div>

@@ -1,25 +1,40 @@
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./screens/login";
-import HomePage from "./screens/Home";
-import ErrorPage from "./screens/ErrorPage";
-import AboutPage from "./screens/About";
 import SideNavBar from "./screens/SideNavBar";
-import AssignInventoryScreen from "./screens/AssignInventoryScreen";
+import { useEffect, useState } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default function App() {
+
+  const auth = getAuth();
+
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const subscriber = onAuthStateChanged(auth, (user) => {
+
+      if (user) {
+        setIsUserLoggedIn(true);
+      } else {
+        setIsUserLoggedIn(false);
+      }
+    });
+    return subscriber; // unsubscribe on unmount
+  }, []);
+
   return (
-    // <BrowserRouter>
-    //   <Routes>
-    //       <Route path="/" element={<HomePage />} />
-    //       <Route path="/Login" element={<LoginPage />} />
-    //       <Route path="/About" element={<AboutPage />} />
-    //       {/* <Route path="*" element={<ErrorPage />} /> */}
-    //   </Routes>
-    // </BrowserRouter>
-    <SideNavBar/>
-    // <AssignInventoryScreen/>
-    // <LoginPage/>  
+    <>
+      {
+        isUserLoggedIn
+          ?
+          <SideNavBar />
+
+          :
+          <LoginPage />
+      }
+    </>
+
+
   );
 }
 

@@ -1,0 +1,112 @@
+.baseContainer{
+    display: flex;
+}
+
+.textContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.loginButton {
+    background-color: #1366D9;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 10px;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.inputStyle {
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-width: 1px;
+}
+
+.headingContainer {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.headingStyle {
+    font-size: 2rem;
+    color: #2B2F38;
+}
+
+.subHeadingStyle {
+    font-size: 1rem;
+    color: #667085;
+
+}
+
+.mainDiv {
+    width: 90%;
+}
+
+.inputContainer {
+    flex-direction: column;
+    display: flex;
+}
+
+.loginButtonContainer {
+    display: flex;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.secondaryContainer {
+    width: 50vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+.primaryContainer {
+    width: 50vw;
+    height: 100vh;
+    align-items: center;
+    align-content: center;
+    padding: 20px;
+}
+
+@media screen and (max-width: 550px){
+    .baseContainer{
+        display: flex;
+        flex-direction: column;
+    }
+    .primaryContainer{
+        width: 100vw;
+        height: fit-content;
+    }
+    .secondaryContainer{
+        width: 100vw;
+        height: fit-content;
+
+    }   
+}
+
+.checkBoxStyle{
+    margin-right: 10px;
+}
+.linkText{
+    color: #1366D9;
+}
+.inputLabel{
+    color: #48505E;
+}
+.imageStyle{
+    width:100%;
+    height:100%;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}

@@ -26,6 +26,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import inventory from '../../assets/images/inventory.jpg'
 import AssignInventoryScreen from '../AssignInventoryScreen';
 import TableComponent from '../../components/TableComponent';
+import ProfilePage from '../profile';
 
 
 
@@ -140,7 +141,6 @@ export default function SideNavBar() {
     setOpen(false);
   };
 
-
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -159,7 +159,7 @@ export default function SideNavBar() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-           {selectedTab}
+            {selectedTab}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -191,7 +191,6 @@ export default function SideNavBar() {
 
                 >
                   {text === 'Profile' && <ContactIcon />}
-
                   {text === 'Assigned Inventory' && <RecentActorsIcon />}
                   {text === 'Home' && <HomeIcon />}
                   {text === 'Inventory' && < InventoryIcon />}
@@ -220,6 +219,11 @@ export default function SideNavBar() {
 
         }
 
+
+        {selectedTab === 'Profile' &&
+          <ProfilePage/>
+        }
+
         {selectedTab === 'Employees' &&
           <>
             <TableComponent data={projectOwnerTableData} showActionButtons={true} tableTitle={'Project-Owner List'} />
@@ -239,7 +243,6 @@ export default function SideNavBar() {
           <AssignInventoryScreen />
         }
 
-        {selectedTab === 'Profile' && <p>Profile screen</p>}
       </Box>
     </Box>
   );
