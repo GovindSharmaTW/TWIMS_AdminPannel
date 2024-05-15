@@ -87,6 +87,22 @@
     font-size: 18px;
 }
 
+.noDataContainer{
+    width: 100vw;
+    height: 10vh;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+.title {
+    font-size: 22px;
+    font-weight: 500;
+    color: #000;
+    font-family: "Roboto", sans-serif;
+    
+}
+
 @media screen and (max-width: 695px) {
     .tableHeading {
         font-size: 10px;
@@ -103,5 +119,8 @@
 
     .addButtonText {
         font-size: 12px;
+    }
+    .title {
+        font-size: 16px;
     }
 }

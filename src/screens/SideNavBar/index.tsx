@@ -27,36 +27,11 @@ import inventory from '../../assets/images/inventory.jpg'
 import AssignInventoryScreen from '../AssignInventoryScreen';
 import TableComponent from '../../components/TableComponent';
 import ProfilePage from '../profile';
-
-
-
-
+import { getDBData } from '../../firebase';
+import { assignedItemDetailsRef, clientsRef, developerRef, inventoryItemsBrandNameRef, inventoryItemsRef, projectOwnerRef } from '../../firebase/firebaseConstants';
+import { ZoomInSharp } from '@mui/icons-material';
+import './style.css'
 const drawerWidth = 240;
-
-const assignedInventoryData = [
-  { S_No: 0, Ass_Item: 'Laptop', brand_Name: 'Lenovo', from_client: true, pro_owner: 'Mukul Pande', developer: 'Govind Sharma', assigned_date: '05_march_2024' },
-  { S_No: 1, Ass_Item: 'Keyboard', brand_Name: 'AVITA', from_client: false, pro_owner: 'Arpita Sharma', developer: 'Aayush Chourasiya', assigned_date: '23_april_2024' },
-  { S_No: 2, Ass_Item: 'Headphone', brand_Name: 'HP', from_client: true, pro_owner: 'Mukul Pande', developer: 'kunal Rai', assigned_date: '16_jan_2024' },
-  { S_No: 3, Ass_Item: 'Connector', brand_Name: 'Potronics', from_client: false, pro_owner: 'Aksh Sharma', developer: 'Aryan Behor', assigned_date: '21_jun_2023' },
-  { S_No: 4, Ass_Item: 'Charger', brand_Name: 'Apple', from_client: true, pro_owner: 'Mukul Pande', developer: 'Shiv Jaiswal', assigned_date: '05_feb_2024' },
-];
-
-const brandTableData = [{ code: '#0001', name: 'HP' }, { code: '#0002', name: 'Avita' }, { code: '#0003', name: 'Dell' }, { code: '#0004', name: 'Appple' }, { code: '#0005', name: 'Lenovo' }]
-
-const clientTableData = [{ id: 0, name: 'Karigar', email: 'karigar@gmail.com', contact: 9873747433 }, { id: 1, name: 'JMB', email: 'jmb@gmail.com', contact: 8873747432 }, { id: 2, name: 'AutoZone', email: 'autozone@gmail.com', contact: 7873747431 }, { id: 3, name: 'LatitudePay', email: 'latitude_pay@gmail.com', contact: 9873747430 }]
-
-const developerTableData = [{ id: 0, name: 'Govind Sharma', email: 'govind@thoughtwin.com', contact: 9876533566 }, { id: 1, name: 'Aayush Chourasiya', email: 'aayush@thoughtwin.com', contact: 8876533567 }, { id: 2, name: 'Kunal Rai', email: 'kunal@thoughtwin.com', contact: 6876533565 }, { id: 3, name: 'Aryan Behor', email: 'aryan@thoughtwin.com', contact: 8876533569 }]
-
-const projectOwnerTableData = [{ id: 0, name: 'Mukul Pande', email: 'mukul@thoughtwin.com', contact: 9876533568 }, { id: 1, name: 'Arpita', email: 'arpita@thoughtwin.com', contact: 8876533586 }, { id: 2, name: 'Aksh Sharma', email: 'aksh@thoughtwin.com', contact: 9876533569 }]
-
-const inventoryTableData = [
-  { name: 'Macbook Pro', code: '#0001', qty: 12, image: inventory },
-  { name: 'Connector ', code: '#0002', qty: 25, image: inventory },
-  { name: 'Mouse', code: '#0003', qty: 32, image: inventory },
-  { name: 'Keyboard', code: '#0004', qty: 50, image: inventory },
-  { name: 'Charger', code: '#0005', qty: 12, image: inventory },
-  { name: 'Laptop', code: '#0006', qty: 10, image: inventory }
-];
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -131,7 +106,13 @@ export default function SideNavBar() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [selectedTab, setSelectedTab] = React.useState('');
-
+  const [inventoryTableData, setInventoryTableData] = React.useState([]);
+  const [brandNameTableData, setBrandNameTableData] = React.useState([]);
+  const [projectOwnerTableData, setProjectOwnerTableData] = React.useState([]);
+  const [developerTableData, setDeveloperTableData] = React.useState([]);
+  const [assignedInvTableData, setAssignedInvTableData] = React.useState([]);
+  const [clientTableData, setClientTableData] = React.useState([]);
+  const [temp, setTemp] = React.useState([])
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -140,6 +121,87 @@ export default function SideNavBar() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const createTableData = (data: any, type: string) => {
+
+    const tempData: any = [];
+    const dataKeys = Object.keys(data);
+
+    dataKeys.map((key, index) => {
+      if (type === 'inventoryItem') {
+        ZoomInSharp
+        tempData.push({ name: data[key].itemName, code: `#000${index + 1}`, qty: 12, image: inventory });
+      }
+      else if (type === 'brandName') {
+        tempData.push({ code: `#000${index + 1}`, name: data[key].brandName });
+      }
+      else if (type === 'projectOwner') {
+        tempData.push({ id: 0, name: data[key].name, email: data[key].email, contact: data[key].phone });
+
+      }
+      else if (type === 'developer') {
+        tempData.push({ id: 0, name: data[key].name, email: data[key].email, contact: data[key].phone });
+      }
+      else if (type === 'assignedData') {
+        tempData.push({ S_No: 0, Ass_Item: data[key].item, brand_Name: data[key].itemBrandName, from_client: data[key].fromClient, pro_owner: data[key].projectOwnerName, developer: data[key].developer, assigned_date: data[key].assignedDate });
+      }
+      else if (type === 'client') {
+        tempData.push({ id: 0, name: data[key].clientName, email: 'karigar@gmail.com', contact: 9873747433 });
+      }
+
+    })
+
+    if (type == 'inventoryItem') {
+      setInventoryTableData(tempData)
+    }
+    else if (type === 'brandName') {
+      setBrandNameTableData(tempData);
+    }
+    else if (type === 'projectOwner') {
+      setProjectOwnerTableData(tempData);
+    }
+    else if (type === 'developer') {
+      setDeveloperTableData(tempData);
+    }
+    else if (type === 'assignedData') {
+      setAssignedInvTableData(tempData);
+    }
+    else if (type === 'client') {
+      setClientTableData(tempData);
+    }
+  }
+
+  const getAllData = async () => {
+    const inventoryItemData = await getDBData(inventoryItemsRef);
+    const inv_Item_BrandNameData = await getDBData(inventoryItemsBrandNameRef);
+    const projectOwnerData = await getDBData(projectOwnerRef);
+    const developerData = await getDBData(developerRef);
+    const assignedInventoryDetailsData = await getDBData(assignedItemDetailsRef);
+    const clientsData = await getDBData(clientsRef);
+
+    if (inventoryItemData) {
+      createTableData(inventoryItemData, 'inventoryItem');
+    }
+    if (inv_Item_BrandNameData) {
+      createTableData(inv_Item_BrandNameData, 'brandName');
+    }
+    if (projectOwnerData) {
+      createTableData(projectOwnerData, 'projectOwner');
+    }
+    if (developerData) {
+      createTableData(developerData, 'developer');
+    }
+    if (assignedInventoryDetailsData) {
+      createTableData(assignedInventoryDetailsData, 'assignedData');
+    }
+    if (clientsData) {
+      createTableData(clientsData, 'client');
+    }
+  }
+
+  React.useEffect(() => {
+    getAllData();
+  }, [])
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -198,7 +260,6 @@ export default function SideNavBar() {
                   {text === 'Employees' && < SupervisedUserCircleIcon />}
                   {text === 'Clients' && < GroupsIcon />}
 
-
                 </ListItemIcon>
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
@@ -209,34 +270,35 @@ export default function SideNavBar() {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
 
         {selectedTab === 'Home' && <p>Home screen</p>}
-
-        {selectedTab === 'Inventory' &&
+        {(selectedTab === 'Inventory' && inventoryTableData.length > 0 && brandNameTableData.length > 0) &&
           <>
-            <TableComponent data={inventoryTableData} showActionButtons={true} tableTitle={'Item List'} />
+            <TableComponent data={temp} showActionButtons={true} tableTitle={'Item List'} />
 
-            <TableComponent data={brandTableData} showActionButtons={true} tableTitle={'Brand List'} />
+            <TableComponent data={brandNameTableData} showActionButtons={true} tableTitle={'Brand List'} />
           </>
+
+
 
         }
 
 
         {selectedTab === 'Profile' &&
-          <ProfilePage/>
+          <ProfilePage />
         }
 
-        {selectedTab === 'Employees' &&
+        {(selectedTab === 'Employees' && projectOwnerTableData.length > 0 && developerTableData.length > 0) &&
           <>
             <TableComponent data={projectOwnerTableData} showActionButtons={true} tableTitle={'Project-Owner List'} />
             <TableComponent data={developerTableData} showActionButtons={true} tableTitle={'Developer List'} />
           </>
         }
 
-        {selectedTab === 'Clients' &&
+        {(selectedTab === 'Clients' && clientTableData.length > 0) &&
           <TableComponent data={clientTableData} showActionButtons={true} tableTitle={'Client List'} />
         }
 
-        {selectedTab === 'Assigned Inventory' &&
-          <TableComponent data={assignedInventoryData} showActionButtons={true} tableTitle={'Assigned Inventory List'} />
+        {(selectedTab === 'Assigned Inventory' && assignedInvTableData.length > 0) &&
+          <TableComponent data={assignedInvTableData} showActionButtons={true} tableTitle={'Assigned Inventory List'} />
         }
 
         {selectedTab === 'Assign Inventory' &&

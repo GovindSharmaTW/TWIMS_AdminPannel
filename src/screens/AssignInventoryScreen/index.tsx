@@ -1,4 +1,5 @@
 import DropDownComponent from '../../components/DropDownComponent';
+import { addDataToFirebaseDB } from '../../firebase';
 import './style.css'
 
 import { Dropdown } from 'primereact/dropdown';
@@ -10,6 +11,10 @@ const AssignInventoryScreen = () => {
   const clientNameData = ['Karigar', 'Plate Rate', 'Auto Zone', 'Latitude Pay', 'CoderWin'];
   const projectOwnerNameData = ['Mukul Pande', 'Arpita', 'Aksh'];
   const developerNameData = ['Govind Sharma', 'Aayush Chourasiya', 'Shiv', 'Aditya'];
+
+  const addDataToDB = () => {
+    addDataToFirebaseDB();
+  }
 
   return (
     <div className='baseContainer'>
@@ -36,8 +41,8 @@ const AssignInventoryScreen = () => {
           <DropDownComponent label={'Developer'} optionsData={developerNameData} />
         </div>
 
-        <div className='loginButtonContainer'>
-          <button className='loginButton'>Save Data</button>
+        <div className='loginButtonContainer' >
+          <button className='loginButton' onClick={addDataToDB}>Save Data</button>
         </div>
       </div>
     </div>

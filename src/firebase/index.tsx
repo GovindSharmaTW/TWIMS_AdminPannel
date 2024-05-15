@@ -1,6 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { getDatabase, ref, onValue, set, push } from "firebase/database";
+import { getCurrentDate } from "../utils";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -21,6 +23,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const database = getDatabase(app);
 
 export const signInUser = (email: any, password: any) => {
 
@@ -49,6 +52,38 @@ export const signOutUser = () => {
         // An error happened.
         console.log("Sign-out error");
 
+    });
+}
+
+export const getDBData = (dbReference: string) => {
+
+    return new Promise((resolve, reject) => {
+        const db = getDatabase();
+        const starCountRef = ref(db, dbReference);
+        onValue(starCountRef, (snapshot) => {
+            const data = snapshot.val();
+            resolve(data);
+        });
+    })
+}
+
+export const addDataToFirebaseDB = () => {
+    const db = getDatabase();
+    const assignedItemListRef = ref(db, '/AssignedInventoryDetails');
+
+    const newAssignedItemListRef = push(assignedItemListRef);
+    set(newAssignedItemListRef, {
+        item: 'Monitor',
+        itemBrandName: 'HP',
+        fromClient: true,
+        fromThoughtWin: false,
+        clientName: 'Karigar',
+        projectOwnerName: 'Mukul Pande',
+        developer: 'Govind Sharma',
+        assignedDate: getCurrentDate(),
+        imageUri: 'Image test uri from web',
+        simCompanyName: '',
+        simNumber: ''
     });
 }
 
