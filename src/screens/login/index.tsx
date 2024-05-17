@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './styles.css'
 import inventory from '../../assets/images/inventory.jpg'
 import { signInUser } from '../../firebase';
@@ -8,10 +8,8 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
 
-  console.log("email and password", email, password);
 
   const handleSignIn = () => {
-    console.log("TT01 handleSignIn function calling");
 
     if (!checkIsEmpty(email) && !checkIsEmpty(password)) {
       signInUser(email, password);

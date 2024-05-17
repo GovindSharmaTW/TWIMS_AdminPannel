@@ -42,15 +42,12 @@ export const signInUser = (email: any, password: any) => {
 }
 
 export const signOutUser = () => {
-    console.log("TT01 signOutUser function called");
     signOut(auth).then(() => {
         // Sign-out successful.
 
         localStorage.clear();
-        console.log("Sign-out successful");
     }).catch((error) => {
         // An error happened.
-        console.log("Sign-out error");
 
     });
 }
@@ -67,23 +64,11 @@ export const getDBData = (dbReference: string) => {
     })
 }
 
-export const addDataToFirebaseDB = () => {
+export const addDataToFirebaseDB = (data: object) => {
     const db = getDatabase();
     const assignedItemListRef = ref(db, '/AssignedInventoryDetails');
 
     const newAssignedItemListRef = push(assignedItemListRef);
-    set(newAssignedItemListRef, {
-        item: 'Monitor',
-        itemBrandName: 'HP',
-        fromClient: true,
-        fromThoughtWin: false,
-        clientName: 'Karigar',
-        projectOwnerName: 'Mukul Pande',
-        developer: 'Govind Sharma',
-        assignedDate: getCurrentDate(),
-        imageUri: 'Image test uri from web',
-        simCompanyName: '',
-        simNumber: ''
-    });
+    set(newAssignedItemListRef, data);
 }
 

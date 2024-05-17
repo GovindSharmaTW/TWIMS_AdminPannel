@@ -29,8 +29,10 @@ import TableComponent from '../../components/TableComponent';
 import ProfilePage from '../profile';
 import { getDBData } from '../../firebase';
 import { assignedItemDetailsRef, clientsRef, developerRef, inventoryItemsBrandNameRef, inventoryItemsRef, projectOwnerRef } from '../../firebase/firebaseConstants';
-import { ZoomInSharp } from '@mui/icons-material';
 import './style.css'
+import Home from '../Home';
+import { useDispatch } from 'react-redux';
+import { addBrandName, addClient, addDeveloper, addInventoryItem, addProjectOwner } from '../../redux/inventorySlice';
 const drawerWidth = 240;
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -103,6 +105,9 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export default function SideNavBar() {
+
+  const dispatch = useDispatch();
+
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [selectedTab, setSelectedTab] = React.useState('');
@@ -129,7 +134,6 @@ export default function SideNavBar() {
 
     dataKeys.map((key, index) => {
       if (type === 'inventoryItem') {
-        ZoomInSharp
         tempData.push({ name: data[key].itemName, code: `#000${index + 1}`, qty: 12, image: inventory });
       }
       else if (type === 'brandName') {
@@ -148,26 +152,30 @@ export default function SideNavBar() {
       else if (type === 'client') {
         tempData.push({ id: 0, name: data[key].clientName, email: 'karigar@gmail.com', contact: 9873747433 });
       }
-
     })
 
     if (type == 'inventoryItem') {
       setInventoryTableData(tempData)
+      dispatch(addInventoryItem(tempData))
     }
     else if (type === 'brandName') {
       setBrandNameTableData(tempData);
+      dispatch(addBrandName(tempData))
     }
     else if (type === 'projectOwner') {
       setProjectOwnerTableData(tempData);
+      dispatch(addProjectOwner(tempData))
     }
     else if (type === 'developer') {
       setDeveloperTableData(tempData);
+      dispatch(addDeveloper(tempData))
     }
     else if (type === 'assignedData') {
       setAssignedInvTableData(tempData);
     }
     else if (type === 'client') {
       setClientTableData(tempData);
+      dispatch(addClient(tempData))
     }
   }
 
@@ -269,7 +277,7 @@ export default function SideNavBar() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
 
-        {selectedTab === 'Home' && <p>Home screen</p>}
+        {selectedTab === 'Home' && <Home />}
         {(selectedTab === 'Inventory' && inventoryTableData.length > 0 && brandNameTableData.length > 0) &&
           <>
             <TableComponent data={temp} showActionButtons={true} tableTitle={'Item List'} />
