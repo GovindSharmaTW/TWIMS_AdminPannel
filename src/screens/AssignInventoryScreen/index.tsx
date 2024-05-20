@@ -51,6 +51,7 @@ const AssignInventoryScreen = () => {
     data.map((element) => {
       type.push(element.name);
     })
+    type = [...new Set(type)]
   }
 
   useEffect(() => {

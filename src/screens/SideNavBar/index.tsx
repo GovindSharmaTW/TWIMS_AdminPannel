@@ -117,7 +117,6 @@ export default function SideNavBar() {
   const [developerTableData, setDeveloperTableData] = React.useState([]);
   const [assignedInvTableData, setAssignedInvTableData] = React.useState([]);
   const [clientTableData, setClientTableData] = React.useState([]);
-  const [temp, setTemp] = React.useState([])
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -280,7 +279,7 @@ export default function SideNavBar() {
         {selectedTab === 'Home' && <Home />}
         {(selectedTab === 'Inventory' && inventoryTableData.length > 0 && brandNameTableData.length > 0) &&
           <>
-            <TableComponent data={temp} showActionButtons={true} tableTitle={'Item List'} />
+            <TableComponent data={inventoryTableData} showActionButtons={true} tableTitle={'Item List'} />
 
             <TableComponent data={brandNameTableData} showActionButtons={true} tableTitle={'Brand List'} />
           </>
