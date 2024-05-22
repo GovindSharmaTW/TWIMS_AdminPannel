@@ -5,8 +5,7 @@ import './style.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../../redux/store';
 import { getCurrentDate } from '../../utils';
-
-
+import { assignedItemDetailsRef } from '../../firebase/firebaseConstants';
 
 const AssignInventoryScreen = () => {
   const [itemData, setItemData] = useState([]);
@@ -37,7 +36,7 @@ const AssignInventoryScreen = () => {
       simCompanyName: '',
       simNumber: ''
     }
-    addDataToFirebaseDB(data);
+    addDataToFirebaseDB(data, assignedItemDetailsRef);
   }
 
   const inventoryItemData = useSelector((state: RootState) => state.inventory.inventoryItems);
@@ -48,43 +47,63 @@ const AssignInventoryScreen = () => {
 
 
   const createDropdownData = (data: object[], type: object[]) => {
+    const temp = [];
     data.map((element) => {
-      type.push(element.name);
+      temp.push(element.name);
     })
-    type = [...new Set(type)]
+
+    if (type == 'item') {
+      setItemData(temp);
+    }
+    else if (type == 'brand') {
+      setItemBrandNameData(temp);
+    }
+    else if (type == 'projectOwner') {
+      setProjectOwnerNameData(temp);
+    }
+    else if (type == 'developer') {
+      setDeveloperNameData(temp);
+    }
+    else if (type == 'client') {
+      setClientNameData(temp);
+    }
+
+    // type = [...new Set(type)]
+
+
   }
 
   useEffect(() => {
     if (inventoryItemData.length > 0) {
-      createDropdownData(inventoryItemData, itemData);
+      createDropdownData(inventoryItemData, "item");
     }
   }, [inventoryItemData])
 
 
   useEffect(() => {
     if (inventoryBrandNameData.length > 0) {
-      createDropdownData(inventoryBrandNameData, itemBrandNameData);
+      createDropdownData(inventoryBrandNameData, "brand");
     }
   }, [inventoryBrandNameData])
 
 
   useEffect(() => {
     if (projectOwnersData.length > 0) {
-      createDropdownData(projectOwnersData, projectOwnerNameData);
+      createDropdownData(projectOwnersData, "projectOwner");
     }
   }, [projectOwnersData])
 
 
   useEffect(() => {
     if (developersData.length > 0) {
-      createDropdownData(developersData, developerNameData);
+      createDropdownData(developersData, "developer");
     }
   }, [developersData])
 
 
   useEffect(() => {
     if (clientsData.length > 0) {
-      createDropdownData(clientsData, clientNameData);
+      createDropdownData(clientsData, "client");
     }
   }, [clientsData])
 

@@ -2,7 +2,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { getDatabase, ref, onValue, set, push } from "firebase/database";
-import { getCurrentDate } from "../utils";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -64,9 +63,9 @@ export const getDBData = (dbReference: string) => {
     })
 }
 
-export const addDataToFirebaseDB = (data: object) => {
+export const addDataToFirebaseDB = (data: object,dbRef:string) => {
     const db = getDatabase();
-    const assignedItemListRef = ref(db, '/AssignedInventoryDetails');
+    const assignedItemListRef = ref(db, dbRef);
 
     const newAssignedItemListRef = push(assignedItemListRef);
     set(newAssignedItemListRef, data);

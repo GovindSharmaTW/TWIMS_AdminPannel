@@ -9,13 +9,11 @@ import ControlPointIcon from '@mui/icons-material/ControlPoint';
 
 const TableComponent = (props: any) => {
 
-    const { data, showActionButtons, tableTitle, style } = props;
+    const { data, showActionButtons, tableTitle, toggleModal, showAddButton } = props;
 
     const isSmallScreen = useMediaQuery('(max-width:690px)');
 
     const [tableHeading, setTableHeading] = useState([])
-    const [columnWidth, setColumnWidth] = useState(10)
-
 
     const iconSize = isSmallScreen ? 18 : 25;
 
@@ -26,8 +24,6 @@ const TableComponent = (props: any) => {
             if (showActionButtons) {
                 dataKeys.push('Actions');
             }
-
-            setColumnWidth(dataKeys.length / 2 * 10)
 
             setTableHeading(dataKeys);
         }
@@ -42,7 +38,6 @@ const TableComponent = (props: any) => {
 
             {data && data.length > 0 ?
                 <>
-
                     <div className='tableHeadingContainer' >
                         {tableHeading.map((item: any) => {
                             return (
@@ -84,15 +79,14 @@ const TableComponent = (props: any) => {
                 </div>
             }
 
-            {data && data.length > 0 &&
+            {data && data.length > 0 && showAddButton &&
                 <div className='addButtonContainer'>
                     <div className='addButton'>
                         <ControlPointIcon sx={{ fontSize: iconSize }} />
-                        <p className='addButtonText'>Add More</p>
+                        <button className='addButtonText' onClick={() => toggleModal(tableTitle)}>Add More</button>
                     </div>
                 </div>
             }
-
         </div>
 
     );

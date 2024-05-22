@@ -69,8 +69,6 @@
     display: flex;
     justify-content: flex-end;
     margin-top: 10px;
-
-
 }
 
 .addButton {
@@ -82,12 +80,12 @@
     align-items: center;
 }
 
-.buttonText {
+.addButtonText {
+    margin-left: 5px;
     font-size: 18px;
-    font-family: "Roboto", sans-serif;
 }
 
-.noDataContainer{
+.noDataContainer {
     width: 100vw;
     height: 10vh;
     display: flex;
@@ -95,18 +93,24 @@
     justify-content: center;
     align-items: center;
 }
+
 .title {
     font-size: 22px;
     font-weight: 500;
     color: #000;
     font-family: "Roboto", sans-serif;
-    
+
 }
 
-.inputStyle{
-    border-color: #000;
-    width: 80%;
+.modalStyle {
+    width: 20vw;
+    border-radius: 10px;
 }
+
+.modalBoxStyle {
+    align-self: center;
+}
+
 
 @media screen and (max-width: 695px) {
     .tableHeading {
@@ -125,7 +129,9 @@
     .addButtonText {
         font-size: 12px;
     }
+
     .title {
         font-size: 16px;
     }
+
 }

@@ -12,3 +12,35 @@
     width: 100%;
     margin-bottom: 20px;
 }
+.inputContainerStyle{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.inputStyle{
+    border-color: #000;
+    width: 65%;
+}
+.addButtonSecContainer {
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    background: #04B4FC;
+    border-radius: 10px;
+    justify-content: center;
+    width: 100%;
+}
+
+.addButtonText {
+    font-size: 18px;
+    font-family: "Roboto", sans-serif;
+}
+
+.inputLabelStyle {
+    font-size: 16px;
+    font-family: "Roboto", sans-serif;
+    width:33%;
+}

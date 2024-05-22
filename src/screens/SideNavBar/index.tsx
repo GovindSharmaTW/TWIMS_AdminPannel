@@ -27,12 +27,14 @@ import inventory from '../../assets/images/inventory.jpg'
 import AssignInventoryScreen from '../AssignInventoryScreen';
 import TableComponent from '../../components/TableComponent';
 import ProfilePage from '../profile';
-import { getDBData } from '../../firebase';
+import { addDataToFirebaseDB, getDBData } from '../../firebase';
 import { assignedItemDetailsRef, clientsRef, developerRef, inventoryItemsBrandNameRef, inventoryItemsRef, projectOwnerRef } from '../../firebase/firebaseConstants';
 import './style.css'
 import Home from '../Home';
 import { useDispatch } from 'react-redux';
 import { addBrandName, addClient, addDeveloper, addInventoryItem, addProjectOwner } from '../../redux/inventorySlice';
+import { checkIsEmpty } from '../../utils';
+import ModalComponent from '../../components/ModalComponent';
 const drawerWidth = 240;
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -117,6 +119,18 @@ export default function SideNavBar() {
   const [developerTableData, setDeveloperTableData] = React.useState([]);
   const [assignedInvTableData, setAssignedInvTableData] = React.useState([]);
   const [clientTableData, setClientTableData] = React.useState([]);
+  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const [modalChildType, setModalChildType] = React.useState('');
+  const [item, setItem] = React.useState('');
+  const [client, setClient] = React.useState('');
+  const [brand, setBrand] = React.useState('');
+  const [proOwnEmail, setProOwnEmail] = React.useState('');
+  const [proOwnName, setProOwnName] = React.useState('');
+  const [proOwnPhone, setProOwnPhone] = React.useState('');
+  const [devEmail, setDevEmail] = React.useState('');
+  const [devName, setDevName] = React.useState('');
+  const [devPhone, setDevPhone] = React.useState('');
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -210,6 +224,158 @@ export default function SideNavBar() {
     getAllData();
   }, [])
 
+  const addDataToDB = () => {
+    const data =
+    {
+      itemName: item
+    }
+    if (!checkIsEmpty(item)) {
+      addDataToFirebaseDB(data, inventoryItemsRef);
+      setItem('');
+    }
+    else {
+      alert('Please Enter Valid Data')
+    }
+  }
+
+
+  const handleModalClose = (type: string) => {
+    setIsModalVisible(!isModalVisible);
+    setModalChildType(type);
+  }
+
+  const getModalChildComponent = () => {
+    if (modalChildType == 'Item List') {
+      return (addItemModalChildComponent())
+    }
+    else if (modalChildType == 'Brand List') {
+      return (addBrandModalChildComponent())
+    }
+    else if (modalChildType == 'Project-Owner List') {
+      return (addProOwnModalChildComponent())
+    }
+    else if (modalChildType == 'Developer List') {
+      return (addDeveModalChildComponent())
+    }
+    else if (modalChildType == 'Client List') {
+      return (addClientModalChildComponent())
+    }
+  }
+
+  const addItemModalChildComponent = () => {
+    return (
+      <div>
+        <div className='inputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Item Name:
+          </label>
+          <input name="myInput" className='inputStyle' onChange={(e) => setItem(e.target.value)} value={item} placeholder='Enter item name' />
+
+        </div>
+
+        <div className='addButtonSecContainer'>
+          <button className='buttonText' onClick={() => addDataToDB()}>Add Data</button>
+        </div>
+
+      </div>
+    )
+  }
+
+  const addBrandModalChildComponent = () => {
+    return (
+      <div>
+        <div className='inputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Brand Name:
+          </label>
+          <input name="myInput" className='inputStyle' onChange={(e) => setBrand(e.target.value)} value={brand} placeholder='Enter brand name' />
+        </div>
+
+        <div className='addButtonSecContainer'>
+          <button className='buttonText' onClick={() => addDataToDB()}>Add Data</button>
+        </div>
+
+      </div>
+    )
+  }
+  const addClientModalChildComponent = () => {
+    return (
+      <div>
+        <div className='inputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Client Name :
+          </label>
+          <input name="myInput" className='inputStyle' onChange={(e) => setClient(e.target.value)} value={client} placeholder='Enter client name' />
+
+        </div>
+
+        <div className='addButtonSecContainer'>
+          <button className='buttonText' onClick={() => addDataToDB()}>Add Data</button>
+        </div>
+
+      </div>
+    )
+  }
+
+  const addProOwnModalChildComponent = () => {
+    return (
+      <div>
+        <div className='inputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Project Owner Email :
+          </label>
+          <input name="myInput" className='inputStyle' onChange={(e) => setProOwnEmail(e.target.value)} value={proOwnEmail} placeholder='Enter email' />
+        </div>
+        <div className='inputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Project Owner Name:
+          </label>
+          <input name="myInput" className='inputStyle' onChange={(e) => setProOwnName(e.target.value)} value={proOwnName} placeholder='Enter name' />
+        </div> <div className='inputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Project Owner Phone No. :
+          </label>
+          <input name="myInput" className='inputStyle' onChange={(e) => setProOwnPhone(e.target.value)} value={proOwnPhone} placeholder='Enter phone no.' />
+        </div>
+
+        <div className='addButtonSecContainer'>
+          <button className='buttonText' onClick={() => addDataToDB()}>Add Data</button>
+        </div>
+
+      </div>
+    )
+  }
+
+  const addDeveModalChildComponent = () => {
+    return (
+      <div>
+        <div className='inputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Developer Email :
+          </label>
+          <input name="myInput" className='inputStyle' onChange={(e) => setDevEmail(e.target.value)} value={devEmail} placeholder='Enter email' />
+        </div>
+        <div className='inputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Developer Name:
+          </label>
+          <input name="myInput" className='inputStyle' onChange={(e) => setDevName(e.target.value)} value={devName} placeholder='Enter name' />
+        </div> <div className='inputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Developer Phone No. :
+          </label>
+          <input name="myInput" className='inputStyle' onChange={(e) => setDevPhone(e.target.value)} value={devPhone} placeholder='Enter phone no.' />
+        </div>
+
+        <div className='addButtonSecContainer'>
+          <button className='buttonText' onClick={() => addDataToDB()}>Add Data</button>
+        </div>
+
+      </div>
+    )
+  }
+
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -276,15 +442,16 @@ export default function SideNavBar() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
 
+        <ModalComponent childComponent={getModalChildComponent()} openModal={isModalVisible} handleModalClose={handleModalClose} />
+
+
         {selectedTab === 'Home' && <Home />}
         {(selectedTab === 'Inventory' && inventoryTableData.length > 0 && brandNameTableData.length > 0) &&
           <>
-            <TableComponent data={inventoryTableData} showActionButtons={true} tableTitle={'Item List'} />
+            <TableComponent data={inventoryTableData} showActionButtons={true} tableTitle={'Item List'} toggleModal={(type: string) => handleModalClose(type)} showAddButton={true} />
 
-            <TableComponent data={brandNameTableData} showActionButtons={true} tableTitle={'Brand List'} />
+            <TableComponent data={brandNameTableData} showActionButtons={true} tableTitle={'Brand List'} toggleModal={handleModalClose} showAddButton={true} />
           </>
-
-
 
         }
 
@@ -295,17 +462,17 @@ export default function SideNavBar() {
 
         {(selectedTab === 'Employees' && projectOwnerTableData.length > 0 && developerTableData.length > 0) &&
           <>
-            <TableComponent data={projectOwnerTableData} showActionButtons={true} tableTitle={'Project-Owner List'} />
-            <TableComponent data={developerTableData} showActionButtons={true} tableTitle={'Developer List'} />
+            <TableComponent data={projectOwnerTableData} showActionButtons={true} tableTitle={'Project-Owner List'} toggleModal={handleModalClose} showAddButton={true} />
+            <TableComponent data={developerTableData} showActionButtons={true} tableTitle={'Developer List'} toggleModal={handleModalClose} showAddButton={true} />
           </>
         }
 
         {(selectedTab === 'Clients' && clientTableData.length > 0) &&
-          <TableComponent data={clientTableData} showActionButtons={true} tableTitle={'Client List'} />
+          <TableComponent data={clientTableData} showActionButtons={true} tableTitle={'Client List'} toggleModal={handleModalClose} showAddButton={true} />
         }
 
         {(selectedTab === 'Assigned Inventory' && assignedInvTableData.length > 0) &&
-          <TableComponent data={assignedInvTableData} showActionButtons={true} tableTitle={'Assigned Inventory List'} />
+          <TableComponent data={assignedInvTableData} showActionButtons={true} tableTitle={'Assigned Inventory List'} toggleModal={handleModalClose} showAddButton={false} />
         }
 
         {selectedTab === 'Assign Inventory' &&
