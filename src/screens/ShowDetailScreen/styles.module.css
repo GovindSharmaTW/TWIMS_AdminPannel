@@ -1,0 +1,203 @@
+.baseContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.textContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.loginButton {
+    background-color: #1366D9;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.inputSecStyle {
+    width: 90%;
+    outline: none;
+}
+
+.headingContainer {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.headingStyle {
+    font-size: 30px;
+    color: #2B2F38;
+    margin-top: 50px;
+    text-decoration: underline;
+}
+
+.subHeadingStyle {
+    font-size: 1rem;
+    color: #667085;
+
+}
+
+.mainDiv {
+    width: 90%;
+}
+
+.inputContainerStyle {
+    flex-direction: column;
+    display: flex;
+    width: 100%;
+}
+
+.inputContainerStyle input {
+    padding: 7px;
+}
+
+.inputStyle {
+    display: flex;
+    flex-direction: row;
+    display: flex;
+    /* width: 100%; */
+    padding: 2px;
+    border: 1px solid #2B2F38;
+    border-width: 1px;
+    border-radius: 10px;
+}
+
+.inputStyle input {
+    padding: 5px;
+}
+
+.inputStyle:has(input:focus) {
+    border: 2px solid rgb(203, 140, 72);
+}
+
+.loginButtonContainer {
+    font-size: 20px;
+}
+
+.secondaryContainer {
+    width: 50vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+
+
+.checkBoxStyle {
+    margin-right: 10px;
+}
+
+.linkText {
+    color: #1366D9;
+}
+
+.inputLabel {
+    color: #48505E;
+}
+
+.eyeIconStyle {
+    color: #1366D9;
+}
+
+.textContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: space-between;
+    width: 100%;
+    padding: 10px;
+}
+
+.dataContainer {
+    margin-top: 20vh;
+    display: flex;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px;
+    text-align: left;
+}
+
+.cardContainer{
+    display: flex;
+    padding: 20px;
+    width: 100vw;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.heading {
+    font-size: 18px;
+    font-weight: 500;
+    color: #000;
+    font-family: "Roboto", sans-serif;
+    width: 50%;
+}
+
+.subHeading {
+    font-size: 16px;
+    color: #000;
+    font-family: "Roboto", sans-serif;
+    width: 40%;
+    text-align:left;
+    margin-left: 10px;
+}
+
+.projectContainer {
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.itemContainer {
+    border-radius: 10px;
+    padding: 10px;
+    margin: 5px;
+}
+
+.subContainer{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+@media screen and (max-width: 550px) {
+    .baseContainer {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .secondaryContainer {
+        width: 100vw;
+        height: fit-content;
+
+    }
+
+    .headingStyle {
+        font-size: 22px;
+    }
+
+    .heading {
+        font-size: 14px;
+        font-weight: 500;
+    }
+    
+    .subHeading {
+        font-size: 12px;
+    }
+}

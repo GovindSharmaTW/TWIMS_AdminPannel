@@ -15,7 +15,7 @@ const style = {
     p: 4
 };
 
-export default function ModalComponent({ childComponent = '', openModal = false, handleModalClose = () => { } }) {
+export default function ModalComponent({ childComponent , openModal = false, handleModalClose = () => { } }) {
     return (
         <div>
             <Modal
@@ -26,7 +26,7 @@ export default function ModalComponent({ childComponent = '', openModal = false,
 
             >
                 <Box sx={style} className='modalStyle'>
-                    {childComponent}
+                    {childComponent()}
                 </Box>
             </Modal>
         </div>

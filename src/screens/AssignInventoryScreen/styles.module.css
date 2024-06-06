@@ -2,7 +2,7 @@
     width: 100%;
     height: 100vh;
 }
-.inputContainer{
+.dropDownContainer{
     width: 100%;
     
 }
@@ -22,13 +22,13 @@
     margin-top: 5px;
 }
 
-.loginButtonContainer {
+.saveButtonContainer {
     display: flex;
     justify-content: center;
     width:100%
 }
 
-.loginButton {
+.saveButton {
     background-color: #1366D9;
     color: white;
     padding: 10px;
@@ -68,8 +68,12 @@
         width: 90VW;
     }
 
-    .loginButton{
+    .saveButton{
     font-size: 15px;
+    }
+
+    .baseContainer{
+       margin-top: 50px;
     }
     
 }

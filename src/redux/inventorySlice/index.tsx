@@ -25,15 +25,6 @@ export const inventorySlice = createSlice({
   name: 'inventory',
   initialState,
   reducers: {
-    increment: (state) => {
-      state.value += 1
-    },
-    decrement: (state) => {
-      state.value -= 1
-    },
-    incrementByAmount: (state, action: PayloadAction<number>) => {
-      state.value += action.payload
-    },
     // Add reducers for adding new items to each state array
     addInventoryItem: (state, action: PayloadAction<object>) => {
       state.inventoryItems = action.payload;
@@ -58,9 +49,6 @@ export const inventorySlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-  increment,
-  decrement,
-  incrementByAmount,
   addInventoryItem,
   addBrandName,
   addProjectOwner,

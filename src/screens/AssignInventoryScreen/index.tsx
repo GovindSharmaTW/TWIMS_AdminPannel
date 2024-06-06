@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import DropDownComponent from '../../components/DropDownComponent';
 import { addDataToFirebaseDB } from '../../firebase';
-import './style.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../../redux/store';
 import { getCurrentDate } from '../../utils';
 import { assignedItemDetailsRef } from '../../firebase/firebaseConstants';
+import styles from './styles.module.css';
 
 const AssignInventoryScreen = () => {
   const [itemData, setItemData] = useState([]);
@@ -109,32 +109,32 @@ const AssignInventoryScreen = () => {
 
 
   return (
-    <div className='baseContainer'>
-      <div className='secondaryContainer'>
-        <h1 className='title'>Assign Inventory</h1>
-        <div className='separator' />
-        <div className='inputContainer'>
+    <div className={styles.baseContainer}>
+      <div className={styles.secondaryContainer}>
+        <h1 className={styles.title}>Assign Inventory</h1>
+        <div className={styles.separator} />
+        <div className={styles.dropDownContainer}>
           <DropDownComponent label={'Item'} optionsData={itemData} selectedValue={(value: string) => setSelectedItem(value)} />
         </div>
 
-        <div className='inputContainer'>
+        <div className={styles.dropDownContainer}>
           <DropDownComponent label={'Item Brand Name'} optionsData={itemBrandNameData} selectedValue={(value: string) => setSelectedItemBrandName(value)} />
         </div>
 
-        <div className='inputContainer'>
+        <div className={styles.dropDownContainer}>
           <DropDownComponent label={'Client Name'} optionsData={clientNameData} selectedValue={(value: string) => setSelectedClient(value)} />
         </div>
 
-        <div className='inputContainer'>
+        <div className={styles.dropDownContainer}>
           <DropDownComponent label={'Project Owner'} optionsData={projectOwnerNameData} selectedValue={(value: string) => setSelectedProjectOwner(value)} />
         </div>
 
-        <div className='inputContainer'>
+        <div className={styles.dropDownContainer}>
           <DropDownComponent label={'Developer'} optionsData={developerNameData} selectedValue={setSelectedDeveloper} />
         </div>
 
-        <div className='loginButtonContainer' >
-          <button className='loginButton' onClick={addDataToDB}>Save Data</button>
+        <div className={styles.saveButtonContainer} >
+          <button className={styles.saveButton} onClick={addDataToDB}>Save Data</button>
         </div>
       </div>
     </div>

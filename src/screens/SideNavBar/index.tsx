@@ -18,7 +18,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ContactIcon from '@mui/icons-material/AccountCircle';
-import HomeIcon from '@mui/icons-material/Home';
 import GroupsIcon from '@mui/icons-material/Groups';
 import RecentActorsIcon from '@mui/icons-material/RecentActors';
 import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
@@ -27,14 +26,16 @@ import inventory from '../../assets/images/inventory.jpg'
 import AssignInventoryScreen from '../AssignInventoryScreen';
 import TableComponent from '../../components/TableComponent';
 import ProfilePage from '../profile';
-import { addDataToFirebaseDB, getDBData } from '../../firebase';
+import { addDataToFirebaseDB, updateFirebaseDBData } from '../../firebase';
 import { assignedItemDetailsRef, clientsRef, developerRef, inventoryItemsBrandNameRef, inventoryItemsRef, projectOwnerRef } from '../../firebase/firebaseConstants';
 import './style.css'
-import Home from '../Home';
 import { useDispatch } from 'react-redux';
 import { addBrandName, addClient, addDeveloper, addInventoryItem, addProjectOwner } from '../../redux/inventorySlice';
-import { checkIsEmpty } from '../../utils';
+import { checkIsObjectEmpty } from '../../utils';
 import ModalComponent from '../../components/ModalComponent';
+import { getDatabase, ref, onValue, set, push } from "firebase/database";
+import { toast } from 'react-toastify';
+
 const drawerWidth = 240;
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -130,7 +131,9 @@ export default function SideNavBar() {
   const [devEmail, setDevEmail] = React.useState('');
   const [devName, setDevName] = React.useState('');
   const [devPhone, setDevPhone] = React.useState('');
-
+  const [updateData, setUpdateData] = React.useState({});
+  const [isUpdate, setIsUpdate] = React.useState(false);
+  const [isEditable, setIsEditable] = React.useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -142,28 +145,30 @@ export default function SideNavBar() {
 
   const createTableData = (data: any, type: string) => {
 
+    console.log("TT01 createTableData is", data, type);
+
     const tempData: any = [];
     const dataKeys = Object.keys(data);
 
     dataKeys.map((key, index) => {
       if (type === 'inventoryItem') {
-        tempData.push({ name: data[key].itemName, code: `#000${index + 1}`, qty: 12, image: inventory });
+        tempData.push({ name: data[key].itemName, code: `#000${index + 1}`, qty: 12, image: inventory, id: key.toString() });
       }
       else if (type === 'brandName') {
-        tempData.push({ code: `#000${index + 1}`, name: data[key].brandName });
+        tempData.push({ code: `#000${index + 1}`, name: data[key].brandName, id: key.toString() });
       }
       else if (type === 'projectOwner') {
-        tempData.push({ id: 0, name: data[key].name, email: data[key].email, contact: data[key].phone });
+        tempData.push({ S_No: index + 1, name: data[key].name, email: data[key].email, contact: data[key].phone, id: key.toString() });
 
       }
       else if (type === 'developer') {
-        tempData.push({ id: 0, name: data[key].name, email: data[key].email, contact: data[key].phone });
+        tempData.push({ S_No: index + 1, name: data[key].name, email: data[key].email, contact: data[key].phone, id: key.toString() });
       }
       else if (type === 'assignedData') {
-        tempData.push({ S_No: 0, Ass_Item: data[key].item, brand_Name: data[key].itemBrandName, from_client: data[key].fromClient, pro_owner: data[key].projectOwnerName, developer: data[key].developer, assigned_date: data[key].assignedDate });
+        tempData.push({ S_No: index + 1, ass_item: data[key].item, item_image_urls: data[key].imageUri, brand_name: data[key].itemBrandName, from_client: data[key].fromClient, client_name: data[key].clientName, pro_owner: data[key].projectOwnerName, developer: data[key].developer, assigned_date: data[key].assignedDate, id: key.toString() });
       }
       else if (type === 'client') {
-        tempData.push({ id: 0, name: data[key].clientName, email: 'karigar@gmail.com', contact: 9873747433 });
+        tempData.push({ S_No: index + 1, name: data[key].clientName, email: 'karigar@gmail.com', contact: 9873747433, id: key.toString() });
       }
     })
 
@@ -192,59 +197,264 @@ export default function SideNavBar() {
     }
   }
 
-  const getAllData = async () => {
-    const inventoryItemData = await getDBData(inventoryItemsRef);
-    const inv_Item_BrandNameData = await getDBData(inventoryItemsBrandNameRef);
-    const projectOwnerData = await getDBData(projectOwnerRef);
-    const developerData = await getDBData(developerRef);
-    const assignedInventoryDetailsData = await getDBData(assignedItemDetailsRef);
-    const clientsData = await getDBData(clientsRef);
+  console.log('inventoryTableData keys is', inventoryTableData);
 
-    if (inventoryItemData) {
-      createTableData(inventoryItemData, 'inventoryItem');
-    }
-    if (inv_Item_BrandNameData) {
-      createTableData(inv_Item_BrandNameData, 'brandName');
-    }
-    if (projectOwnerData) {
-      createTableData(projectOwnerData, 'projectOwner');
-    }
-    if (developerData) {
-      createTableData(developerData, 'developer');
-    }
-    if (assignedInventoryDetailsData) {
-      createTableData(assignedInventoryDetailsData, 'assignedData');
-    }
-    if (clientsData) {
-      createTableData(clientsData, 'client');
-    }
-  }
 
   React.useEffect(() => {
-    getAllData();
+
+    const db = getDatabase();
+
+    const inventoryDBRef = ref(db, inventoryItemsRef);
+    const unsubscribeInventoryRef = onValue(inventoryDBRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        createTableData(data, 'inventoryItem');
+      }
+    });
+
+    const brandDBRef = ref(db, inventoryItemsBrandNameRef);
+    const unsubscribeBrandRef = onValue(brandDBRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        createTableData(data, 'brandName');
+      }
+    });
+
+    const clientDBRef = ref(db, clientsRef);
+    const unsubscribeClientRef = onValue(clientDBRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        createTableData(data, 'client');
+      }
+    });
+
+    const proOwnDBRef = ref(db, projectOwnerRef);
+    const unsubscribeProOwnRef = onValue(proOwnDBRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        createTableData(data, 'projectOwner');
+      }
+    });
+
+    const devDBRef = ref(db, developerRef);
+    const unsubscribeDevRef = onValue(devDBRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        createTableData(data, 'developer');
+      }
+    });
+
+    const assignedDataDBRef = ref(db, assignedItemDetailsRef);
+    const unsubscribeAssignedDataRef = onValue(assignedDataDBRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        createTableData(data, 'assignedData');
+      }
+    });
+
+    return () => {
+      console.log("TT-01");
+      unsubscribeInventoryRef();
+      unsubscribeBrandRef();
+      unsubscribeClientRef();
+      unsubscribeProOwnRef();
+      unsubscribeDevRef();
+      unsubscribeAssignedDataRef();
+    }
   }, [])
 
-  const addDataToDB = () => {
-    const data =
-    {
-      itemName: item
+  React.useEffect(() => {
+    if (assignedInvTableData.length > 0) {
+
+      console.log("TT01 assignedInvTableData", assignedInvTableData);
+
+      const userMap = new Map();
+
+      assignedInvTableData.forEach(item => {
+        const name = item.developer.toLowerCase(); // To handle case insensitivity
+        if (!userMap.has(name)) {
+          userMap.set(name, {
+            name: item.developer,
+            totalProject: 0,
+            totalAssignedItem: 0,
+            assignedItems: [],
+            clients: []
+          });
+        }
+
+        const user = userMap.get(name);
+
+        //  const checkClient = user.clients.some(client =>client === item.client_name);
+        // if (item.fromClient && !checkClient) {
+        if (item.from_client) {
+
+          //  user.clients.push(item.client_name); 
+
+          user.totalProject += 1;
+        }
+
+        const checkItem = user.assignedItems.some(assItem => assItem === item.ass_item);
+        if (!checkItem) {
+          user.assignedItems.push({ item: item.ass_item, ass_date: item.assigned_date, item_image_urls: item.item_image_urls, client: item.client_name, brand: item.brand_name, project_owner: item.pro_owner });
+
+          user.totalAssignedItem += 1;
+        }
+
+      });
+
+      const finalData = Array.from(userMap.values());
+
+      if (developerTableData.length > 0) {
+        const updatedDeveloperTableData = developerTableData.map(item => {
+          // Create a shallow copy to ensure it's extensible
+          const extensibleItem = { ...item };
+
+          const developerData = finalData.find(tempItem => tempItem.name === extensibleItem.name);
+
+          console.log("TT01 outside developerTableData", developerTableData);
+          console.log("TT01 outside developerData", developerData);
+
+          if (developerData) {
+            console.log("TT01 inside developerData", developerData);
+
+            if (developerData.totalAssignedItem) {
+              extensibleItem.total_ass_item = developerData.totalAssignedItem;
+            }
+
+            if (developerData.totalProject) {
+              extensibleItem.total_ass_project = developerData.totalProject;
+            }
+
+            extensibleItem.ass_items = developerData.assignedItems
+          }
+          else {
+            extensibleItem.total_ass_Item = 0;
+
+            extensibleItem.total_ass_project = 0;
+          }
+
+          return extensibleItem;
+        });
+
+        setDeveloperTableData(updatedDeveloperTableData); // Update the state with the new array
+      }
+
+      console.log("finaldata is", finalData);
     }
-    if (!checkIsEmpty(item)) {
-      addDataToFirebaseDB(data, inventoryItemsRef);
-      setItem('');
+  }, [assignedInvTableData]);
+
+  const clearAllStates = () => {
+    setIsModalVisible(false);
+    setItem('');
+    setClient('');
+    setBrand('');
+    setProOwnEmail('');
+    setProOwnName('');
+    setProOwnPhone('');
+    setDevEmail('');
+    setDevName('');
+    setDevPhone('');
+  }
+
+  const addDataToDB = (type: string, operationType: string) => {
+
+    console.log("TT01 addDataToDB type operationType", type, operationType);
+
+    let data = {};
+    let ref = '';
+
+    if (type == 'item') {
+      data =
+      {
+        itemName: item
+      }
+      ref = inventoryItemsRef
+    }
+    else if (type == 'brand') {
+      data =
+      {
+        brandName: brand
+      }
+      ref = inventoryItemsBrandNameRef
+    }
+    else if (type == 'client') {
+      data =
+      {
+        clientName: client
+      }
+      ref = clientsRef
+    }
+    else if (type == 'proOwner') {
+      data =
+      {
+        email: proOwnEmail,
+        name: proOwnName,
+        phone: proOwnPhone
+      }
+      ref = projectOwnerRef
+    }
+    else if (type == 'developer') {
+      data =
+      {
+        email: devEmail,
+        name: devName,
+        phone: devPhone
+      }
+      ref = developerRef
+    }
+
+
+    if (!checkIsObjectEmpty(data)) {
+
+      if (operationType == 'update') {
+        updateFirebaseDBData(ref, updateData.id, data)
+          .then(() => {
+            clearAllStates();
+          });
+      }
+      else {
+        addDataToFirebaseDB(data, ref)
+          .then(() => {
+            clearAllStates();
+          })
+      }
+
     }
     else {
-      alert('Please Enter Valid Data')
+      toast.error('Please Enter Valid Data')
     }
   }
 
 
-  const handleModalClose = (type: string) => {
+  const handleModalClose = (props: any) => {
+
+    console.log("TT01 handleModalClose function props are", props);
+
+    const { tableTitle, val } = props;
+
+    console.log("TT01 handleModalClose function props val is", val);
+
+
     setIsModalVisible(!isModalVisible);
-    setModalChildType(type);
+    setModalChildType(tableTitle);
+
+    if (val !== undefined) {
+      console.log('if>>>>361')
+      setUpdateData(val);
+      setIsUpdate(true);
+      setIsEditable(false);
+    }
+    else {
+      console.log('else>>>>361')
+      setUpdateData({});
+      setIsUpdate(false);
+    }
   }
 
   const getModalChildComponent = () => {
+
+    console.log("TT01 getModalChildComponent calling", modalChildType);
+
     if (modalChildType == 'Item List') {
       return (addItemModalChildComponent())
     }
@@ -255,7 +465,7 @@ export default function SideNavBar() {
       return (addProOwnModalChildComponent())
     }
     else if (modalChildType == 'Developer List') {
-      return (addDeveModalChildComponent())
+      return (addDevModalChildComponent())
     }
     else if (modalChildType == 'Client List') {
       return (addClientModalChildComponent())
@@ -263,18 +473,22 @@ export default function SideNavBar() {
   }
 
   const addItemModalChildComponent = () => {
+
+    if (!checkIsObjectEmpty(updateData) && !isEditable) {
+      setItem(updateData.name);
+    }
+
     return (
       <div>
-        <div className='inputContainerStyle'>
+        <div className='modellnputContainerStyle'>
           <label className='inputLabelStyle'>
             Item Name:
           </label>
-          <input name="myInput" className='inputStyle' onChange={(e) => setItem(e.target.value)} value={item} placeholder='Enter item name' />
-
+          <input name="myInput" className='modelInputStyle' onChange={(e) => { setItem(e.target.value), setIsEditable(true) }} value={item} placeholder='Enter item name' />
         </div>
 
         <div className='addButtonSecContainer'>
-          <button className='buttonText' onClick={() => addDataToDB()}>Add Data</button>
+          <button className='buttonText' onClick={() => addDataToDB('item', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
         </div>
 
       </div>
@@ -282,35 +496,41 @@ export default function SideNavBar() {
   }
 
   const addBrandModalChildComponent = () => {
+    if (!checkIsObjectEmpty(updateData) && !isEditable) {
+      setBrand(updateData.name);
+    }
     return (
       <div>
-        <div className='inputContainerStyle'>
+        <div className='modellnputContainerStyle'>
           <label className='inputLabelStyle'>
             Brand Name:
           </label>
-          <input name="myInput" className='inputStyle' onChange={(e) => setBrand(e.target.value)} value={brand} placeholder='Enter brand name' />
+          <input name="myInput" className='modelInputStyle' onChange={(e) => { setBrand(e.target.value), setIsEditable(true) }} value={brand} placeholder='Enter brand name' />
         </div>
 
         <div className='addButtonSecContainer'>
-          <button className='buttonText' onClick={() => addDataToDB()}>Add Data</button>
+          <button className='buttonText' onClick={() => addDataToDB('brand', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
         </div>
 
       </div>
     )
   }
   const addClientModalChildComponent = () => {
+    if (!checkIsObjectEmpty(updateData) && !isEditable) {
+      setClient(updateData.name);
+    }
     return (
       <div>
-        <div className='inputContainerStyle'>
+        <div className='modellnputContainerStyle'>
           <label className='inputLabelStyle'>
             Client Name :
           </label>
-          <input name="myInput" className='inputStyle' onChange={(e) => setClient(e.target.value)} value={client} placeholder='Enter client name' />
+          <input name="myInput" className='modelInputStyle' onChange={(e) => { setClient(e.target.value), setIsEditable(true) }} value={client} placeholder='Enter client name' />
 
         </div>
 
         <div className='addButtonSecContainer'>
-          <button className='buttonText' onClick={() => addDataToDB()}>Add Data</button>
+          <button className='buttonText' onClick={() => addDataToDB('client', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
         </div>
 
       </div>
@@ -318,63 +538,74 @@ export default function SideNavBar() {
   }
 
   const addProOwnModalChildComponent = () => {
+    if (!checkIsObjectEmpty(updateData) && !isEditable) {
+      setProOwnEmail(updateData.email);
+      setProOwnName(updateData.name);
+      setProOwnPhone(updateData.contact);
+    }
     return (
       <div>
-        <div className='inputContainerStyle'>
+        <div className='modellnputContainerStyle'>
           <label className='inputLabelStyle'>
             Project Owner Email :
           </label>
-          <input name="myInput" className='inputStyle' onChange={(e) => setProOwnEmail(e.target.value)} value={proOwnEmail} placeholder='Enter email' />
+          <input name="myInput" className='modelInputStyle' onChange={(e) => { setProOwnEmail(e.target.value), setIsEditable(true) }} value={proOwnEmail} placeholder='Enter email' />
         </div>
-        <div className='inputContainerStyle'>
+        <div className='modellnputContainerStyle'>
           <label className='inputLabelStyle'>
             Project Owner Name:
           </label>
-          <input name="myInput" className='inputStyle' onChange={(e) => setProOwnName(e.target.value)} value={proOwnName} placeholder='Enter name' />
-        </div> <div className='inputContainerStyle'>
+          <input name="myInput" className='modelInputStyle' onChange={(e) => { setProOwnName(e.target.value), setIsEditable(true) }} value={proOwnName} placeholder='Enter name' />
+        </div> <div className='modellnputContainerStyle'>
           <label className='inputLabelStyle'>
             Project Owner Phone No. :
           </label>
-          <input name="myInput" className='inputStyle' onChange={(e) => setProOwnPhone(e.target.value)} value={proOwnPhone} placeholder='Enter phone no.' />
+          <input name="myInput" className='modelInputStyle' onChange={(e) => { setProOwnPhone(e.target.value), setIsEditable(true) }} value={proOwnPhone} placeholder='Enter phone no.' />
         </div>
 
         <div className='addButtonSecContainer'>
-          <button className='buttonText' onClick={() => addDataToDB()}>Add Data</button>
+          <button className='buttonText' onClick={() => addDataToDB('proOwner', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
         </div>
 
       </div>
     )
   }
 
-  const addDeveModalChildComponent = () => {
+  const addDevModalChildComponent = () => {
+
+    if (!checkIsObjectEmpty(updateData) && !isEditable) {
+      setDevEmail(updateData.email);
+      setDevName(updateData.name);
+      setDevPhone(updateData.contact);
+    }
+
     return (
       <div>
-        <div className='inputContainerStyle'>
+        <div className='modellnputContainerStyle'>
           <label className='inputLabelStyle'>
             Developer Email :
           </label>
-          <input name="myInput" className='inputStyle' onChange={(e) => setDevEmail(e.target.value)} value={devEmail} placeholder='Enter email' />
+          <input name="myInput" className='modelInputStyle' onChange={(e) => { setDevEmail(e.target.value), setIsEditable(true) }} value={devEmail} placeholder='Enter email' />
         </div>
-        <div className='inputContainerStyle'>
+        <div className='modellnputContainerStyle'>
           <label className='inputLabelStyle'>
             Developer Name:
           </label>
-          <input name="myInput" className='inputStyle' onChange={(e) => setDevName(e.target.value)} value={devName} placeholder='Enter name' />
-        </div> <div className='inputContainerStyle'>
+          <input name="myInput" className='modelInputStyle' onChange={(e) => { setDevName(e.target.value), setIsEditable(true) }} value={devName} placeholder='Enter name' />
+        </div> <div className='modellnputContainerStyle'>
           <label className='inputLabelStyle'>
             Developer Phone No. :
           </label>
-          <input name="myInput" className='inputStyle' onChange={(e) => setDevPhone(e.target.value)} value={devPhone} placeholder='Enter phone no.' />
+          <input name="myInput" className='modelInputStyle' onChange={(e) => { setDevPhone(e.target.value), setIsEditable(true) }} value={devPhone} placeholder='Enter phone no.' />
         </div>
 
         <div className='addButtonSecContainer'>
-          <button className='buttonText' onClick={() => addDataToDB()}>Add Data</button>
+          <button className='buttonText' onClick={() => addDataToDB('developer', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
         </div>
 
       </div>
     )
   }
-
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -406,7 +637,7 @@ export default function SideNavBar() {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Home', 'Inventory', 'Employees', 'Assigned Inventory', 'Assign Inventory', 'Clients', 'Profile'].map((text, index) => (
+          {['Inventory', 'Employees', 'Assigned Inventory', 'Assign Inventory', 'Clients', 'Profile'].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={{
@@ -427,7 +658,6 @@ export default function SideNavBar() {
                 >
                   {text === 'Profile' && <ContactIcon />}
                   {text === 'Assigned Inventory' && <RecentActorsIcon />}
-                  {text === 'Home' && <HomeIcon />}
                   {text === 'Inventory' && < InventoryIcon />}
                   {text === 'Assign Inventory' && < AssignmentIcon />}
                   {text === 'Employees' && < SupervisedUserCircleIcon />}
@@ -442,13 +672,12 @@ export default function SideNavBar() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
 
-        <ModalComponent childComponent={getModalChildComponent()} openModal={isModalVisible} handleModalClose={handleModalClose} />
+        <ModalComponent childComponent={getModalChildComponent} openModal={isModalVisible} handleModalClose={handleModalClose} />
 
 
-        {selectedTab === 'Home' && <Home />}
         {(selectedTab === 'Inventory' && inventoryTableData.length > 0 && brandNameTableData.length > 0) &&
           <>
-            <TableComponent data={inventoryTableData} showActionButtons={true} tableTitle={'Item List'} toggleModal={(type: string) => handleModalClose(type)} showAddButton={true} />
+            <TableComponent data={inventoryTableData} showActionButtons={true} tableTitle={'Item List'} toggleModal={handleModalClose} showAddButton={true} />
 
             <TableComponent data={brandNameTableData} showActionButtons={true} tableTitle={'Brand List'} toggleModal={handleModalClose} showAddButton={true} />
           </>

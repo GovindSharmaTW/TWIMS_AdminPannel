@@ -1,7 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { getDatabase, ref, onValue, set, push } from "firebase/database";
+import { getDatabase, ref, onValue, set, push, remove, update } from "firebase/database";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -24,50 +26,117 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
+
 export const signInUser = (email: any, password: any) => {
 
-    signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            // Signed in 
-            const user = userCredential.user;
+    return new Promise((resolve, reject) => {
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
 
-            localStorage.setItem('user', JSON.stringify(user.email));
-        })
-        .catch((error) => {
-            const errorMessage = error.message;
+                localStorage.setItem('user', JSON.stringify(user.email));
 
-            alert(errorMessage);
-        });
+                toast.success('SignIn Successfull');
+                resolve(true);
+
+            })
+            .catch((error) => {
+                const errorMessage = error.message;
+                resolve(false);
+                toast.error(errorMessage);
+            });
+    })
 }
 
 export const signOutUser = () => {
-    signOut(auth).then(() => {
-        // Sign-out successful.
-
-        localStorage.clear();
-    }).catch((error) => {
-        // An error happened.
-
-    });
-}
-
-export const getDBData = (dbReference: string) => {
-
     return new Promise((resolve, reject) => {
-        const db = getDatabase();
-        const starCountRef = ref(db, dbReference);
-        onValue(starCountRef, (snapshot) => {
-            const data = snapshot.val();
-            resolve(data);
+        signOut(auth).then(() => {
+            toast.success('Signout successfully');
+            resolve(true);
+            localStorage.clear();
+        }).catch((error) => {
+            // An error happened.
+            toast.error(error);
+            resolve(false);
+
         });
     })
 }
 
-export const addDataToFirebaseDB = (data: object,dbRef:string) => {
-    const db = getDatabase();
-    const assignedItemListRef = ref(db, dbRef);
+// export const getDBData = (dbReference: string) => {
+//     return new Promise((resolve, reject) => {
+//         const db = getDatabase();
+//         const firebaseDBRef = ref(db, dbReference);
+//         onValue(firebaseDBRef, (snapshot) => {
+//             const data = snapshot.val();
+//             console.log("TT01 getDBData function calling",data);
+//             resolve(data);
+//         });
+//     })
+// }
 
-    const newAssignedItemListRef = push(assignedItemListRef);
-    set(newAssignedItemListRef, data);
+export const addDataToFirebaseDB = (data: object, dbRef: string) => {
+
+    return new Promise((resolve, reject) => {
+        const db = getDatabase();
+        const gotRef = ref(db, dbRef);
+
+        const firebaseDBRef = push(gotRef);
+        set(firebaseDBRef, data)
+            .then(() => {
+                resolve(true);
+
+                toast.success('Data added successfully');
+            })
+            .catch((error) => {
+                resolve(false);
+                toast.error(`Something went wrong ${error}`);
+            });
+
+    })
+
 }
+
+export const deleteDataFromFirebaseDB = (dbRef: string, id: string) => {
+
+    return new Promise((resolve, reject) => {
+        const db = getDatabase();
+
+        remove(ref(db, `/${dbRef}/` + id))
+            .then(() => {
+                resolve(true);
+
+                toast.success('data deleted successfully');
+            })
+            .catch((error) => {
+                resolve(false);
+                toast.error(`Something went wrong ${error}`);
+            })
+
+    })
+
+}
+
+export const updateFirebaseDBData = (dbRef: string, id: string, data: {}) => {
+
+    const datanew = 'updated ite 123'
+
+    return new Promise((resolve, reject) => {
+        const db = getDatabase();
+
+        update(ref(db, `/${dbRef}/` + id), data)
+            .then(() => {
+                resolve(true);
+                toast.success('data updated successfully');
+            })
+            .catch((error) => {
+                resolve(false);
+                toast.error(`Something went wrong ${error}`);
+            })
+
+    })
+
+}
+
 

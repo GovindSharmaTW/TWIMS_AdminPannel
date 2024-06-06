@@ -17,6 +17,22 @@
     word-break: break-all;
 }
 
+.modalTitle {
+    display: flex;
+    font-size: 18px;
+    font-weight: 500;
+    justify-content: center;
+    font-family: "Roboto", sans-serif;
+    margin-bottom: 15px;
+}
+
+.modalButtonContainer {
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    background: #04B4FC;
+}
+
 .tableDataContainer {
     display: flex;
     justify-content: space-between;
@@ -54,10 +70,15 @@
 
 .tableStyle {
     margin-top: 100px;
+    justify-content: center;
 }
 
 .deleteIcon {
     color: red;
+}
+
+.arrowIcon {
+    color: #212529;
 }
 
 .editIcon {
@@ -69,8 +90,11 @@
     display: flex;
     justify-content: flex-end;
     margin-top: 10px;
+}
 
-
+.buttonContainer {
+    display: flex;
+    justify-content: space-between;
 }
 
 .addButton {
@@ -87,7 +111,7 @@
     font-family: "Roboto", sans-serif;
 }
 
-.noDataContainer{
+.noDataContainer {
     width: 100vw;
     height: 10vh;
     display: flex;
@@ -95,17 +119,13 @@
     justify-content: center;
     align-items: center;
 }
+
 .title {
     font-size: 22px;
     font-weight: 500;
     color: #000;
     font-family: "Roboto", sans-serif;
-    
-}
 
-.inputStyle{
-    border-color: #000;
-    width: 80%;
 }
 
 @media screen and (max-width: 695px) {
@@ -125,6 +145,7 @@
     .addButtonText {
         font-size: 12px;
     }
+
     .title {
         font-size: 16px;
     }
