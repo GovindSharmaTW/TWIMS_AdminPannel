@@ -1,5 +1,5 @@
 
-import './style.css'
+import styles from './style.module.css'
 import inventory from '../../assets/images/inventory.jpg'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -11,6 +11,7 @@ import { assignedItemDetailsRef, clientsRef, developerRef, inventoryItemsBrandNa
 import { deleteDataFromFirebaseDB } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
 import ModalComponent from '../ModalComponent';
+import { toast } from 'react-toastify';
 
 const TableComponent = (props: any) => {
 
@@ -41,8 +42,13 @@ const TableComponent = (props: any) => {
         }
     }, [data])
 
-    const openShowDetailScreen = (item) => {
-        navigate("/ShowDetail", { state: { data: item } })
+    const openShowDetailScreen = (item: object) => {
+        if(item.ass_items !== undefined){
+            navigate("/ShowDetail", { state: { data: item } })
+        }
+        else{
+            toast.error('No Data found to display')
+        }
     }
 
     const deleteData = (id: string, tableType: string) => {
@@ -75,19 +81,19 @@ const TableComponent = (props: any) => {
     const deleteItemModalChildComponent = () => {
         return (
             <div>
-                <div className='modellnputContainerStyle'>
-                    <label className='modalTitle'>
+                <div className={styles.modellnputContainerStyle}>
+                    <label className={styles.modalTitle}>
                         Do you really want to delete this data ?
                     </label>
                 </div>
 
-                <div className='buttonContainer'>
-                    <div className='modalButtonContainer'>
-                        <button className='buttonText' onClick={() => handleModalClose()}>Cancel</button>
+                <div className={styles.buttonContainer}>
+                    <div className={styles.modalButtonContainer}>
+                        <button className={styles.buttonText} onClick={() => handleModalClose()}>Cancel</button>
                     </div>
 
-                    <div className='modalButtonContainer'>
-                        <button className='buttonText' onClick={() => { deleteData(del_data.id, del_data.tableTitle) }}>Delete</button>
+                    <div className={styles.modalButtonContainer}>
+                        <button className={styles.buttonText} onClick={() => { deleteData(del_data.id, del_data.tableTitle) }}>Delete</button>
                     </div>
                 </div>
             </div>
@@ -108,17 +114,17 @@ const TableComponent = (props: any) => {
             <ModalComponent childComponent={deleteItemModalChildComponent} openModal={isModalVisible} handleModalClose={handleModalClose} />
 
             {tableTitle &&
-                <h1 className='tableTitle'>{tableTitle}:</h1>
+                <h1 className={styles.tableTitle}>{tableTitle}:</h1>
             }
 
             {data && data.length > 0 ?
                 <>
-                    <div className='tableHeadingContainer' >
+                    <div className={styles.tableHeadingContainer} >
                         {tableHeading.map((item: any) => {
                             return (
                                 <>
                                     {item !== 'id' && item !== 'item_image_urls' && item !== 'client_name' && item !== 'ass_items' &&
-                                        <h1 className='tableHeading' >{item.toUpperCase()}</h1>
+                                        <h1 className={styles.tableHeading} >{item.toUpperCase()}</h1>
                                     }
                                 </>
                             )
@@ -128,33 +134,33 @@ const TableComponent = (props: any) => {
                     {
                         data.map((val: any) => {
                             return (
-                                < div className='tableDataContainer'>
+                                < div className={styles.tableDataContainer}>
 
                                     {Object.keys(val)?.map((key) => {
                                         return (
                                             key !== 'image' && key !== 'id' && key !== 'item_image_urls' && key !== 'client_name' && key !== 'ass_items' &&
-                                            <h1 className='tableData' >{val[key].toString()}</h1>
+                                            <h1 className={styles.tableData} >{val[key].toString()}</h1>
                                         )
                                     })}
 
                                     {tableHeading.includes('image') &&
-                                        <div className='tableData'  >
-                                            <img src={inventory} alt="" className='itemImageStyle' />
+                                        <div className={styles.tableData}  >
+                                            <img src={inventory} alt="" className={styles.itemImageStyle} />
                                         </div>
                                     }
 
-                                    <div className='tableData'>
-                                        {
-                                            tableTitle == 'Developer List'
-                                                ?
-                                                <button onClick={() => openShowDetailScreen(val)}><ArrowForwardIosIcon sx={{ fontSize: iconSize }} className='arrowIcon' /></button>
-                                                :
-                                                <>
-                                                    <button onClick={() => toggleModal({ tableTitle, val })}><EditIcon sx={{ fontSize: iconSize }} className='editIcon' /></button>
-                                                    {/* <button onClick={() => }><DeleteIcon sx={{ fontSize: iconSize }} className='deleteIcon' /></button> */}
-                                                    <button onClick={() => handleModalClose({ id: val.id, tableTitle: tableTitle })}><DeleteIcon sx={{ fontSize: iconSize }} className='deleteIcon' /></button>
+                                    <div className={styles.tableData}>
+                                       
+                                        <>
+                                            <button onClick={() => toggleModal({ tableTitle, val })}><EditIcon sx={{ fontSize: iconSize }} className={styles.editIcon} /></button>
+                                            <button onClick={() => handleModalClose({ id: val.id, tableTitle: tableTitle })}><DeleteIcon sx={{ fontSize: iconSize }} className={styles.deleteIcon} /></button>
 
-                                                </>
+                                        </>
+
+                                        {
+                                            tableTitle == 'Developer List' &&
+
+                                            <button onClick={() => openShowDetailScreen(val)}><ArrowForwardIosIcon sx={{ fontSize: iconSize }} className={styles.arrowIcon} /></button>
                                         }
                                     </div>
                                 </div>
@@ -163,16 +169,16 @@ const TableComponent = (props: any) => {
                     }
                 </>
                 :
-                <div className='noDataContainer'>
-                    <h1 className='title'>No Data Found</h1>
+                <div className={styles.noDataContainer}>
+                    <h1 className={styles.title}>No Data Found</h1>
                 </div>
             }
 
             {data && data.length > 0 && showAddButton &&
-                <div className='addButtonContainer'>
-                    <div className='addButton'>
+                <div className={styles.addButtonContainer}>
+                    <div className={styles.addButton}>
                         <ControlPointIcon sx={{ fontSize: iconSize }} />
-                        <button className='addButtonText' onClick={() => toggleModal({ tableTitle })}>Add More</button>
+                        <button className={styles.addButtonText} onClick={() => toggleModal({ tableTitle })}>Add More</button>
                     </div>
                 </div>
             }

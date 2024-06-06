@@ -37,7 +37,7 @@ export const signInUser = (email: any, password: any) => {
 
                 localStorage.setItem('user', JSON.stringify(user.email));
 
-                toast.success('SignIn Successfull');
+                toast.success('SignIn Successfully');
                 resolve(true);
 
             })
@@ -64,17 +64,6 @@ export const signOutUser = () => {
     })
 }
 
-// export const getDBData = (dbReference: string) => {
-//     return new Promise((resolve, reject) => {
-//         const db = getDatabase();
-//         const firebaseDBRef = ref(db, dbReference);
-//         onValue(firebaseDBRef, (snapshot) => {
-//             const data = snapshot.val();
-//             console.log("TT01 getDBData function calling",data);
-//             resolve(data);
-//         });
-//     })
-// }
 
 export const addDataToFirebaseDB = (data: object, dbRef: string) => {
 

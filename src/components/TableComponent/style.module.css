@@ -128,6 +128,11 @@
 
 }
 
+.addButtonText {
+    font-size: 16px;
+    margin-left: 2px;
+}
+
 @media screen and (max-width: 695px) {
     .tableHeading {
         font-size: 10px;
@@ -143,10 +148,14 @@
     }
 
     .addButtonText {
-        font-size: 12px;
+        font-size: 10px;
     }
 
     .title {
+        font-size: 16px;
+    }
+
+    .buttonText {
         font-size: 16px;
     }
 }

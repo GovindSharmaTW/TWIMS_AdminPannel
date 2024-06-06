@@ -113,7 +113,7 @@ export default function SideNavBar() {
 
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [selectedTab, setSelectedTab] = React.useState('');
+  const [selectedTab, setSelectedTab] = React.useState('Inventory');
   const [inventoryTableData, setInventoryTableData] = React.useState([]);
   const [brandNameTableData, setBrandNameTableData] = React.useState([]);
   const [projectOwnerTableData, setProjectOwnerTableData] = React.useState([]);
