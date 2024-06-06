@@ -31,7 +31,7 @@ import { assignedItemDetailsRef, clientsRef, developerRef, inventoryItemsBrandNa
 import './style.css'
 import { useDispatch } from 'react-redux';
 import { addBrandName, addClient, addDeveloper, addInventoryItem, addProjectOwner } from '../../redux/inventorySlice';
-import { checkIsObjectEmpty } from '../../utils';
+import { checkIsEmpty, checkIsObjectEmpty } from '../../utils';
 import ModalComponent from '../../components/ModalComponent';
 import { getDatabase, ref, onValue, set, push } from "firebase/database";
 import { toast } from 'react-toastify';
@@ -413,10 +413,28 @@ export default function SideNavBar() {
           });
       }
       else {
-        addDataToFirebaseDB(data, ref)
-          .then(() => {
-            clearAllStates();
-          })
+        const dataKeys = Object.keys(data);
+
+        const isEmpty = dataKeys.map((key) => {
+          if (checkIsEmpty(data[key])) {
+            return false;
+          }
+          else {
+            return true
+          }
+        })
+
+        const isDataValid = isEmpty.find((item) => item === false);
+
+        if (isDataValid !== false) {
+          addDataToFirebaseDB(data, ref)
+            .then(() => {
+              clearAllStates();
+            })
+        }
+        else {
+          toast.error('All data is required');
+        }
       }
 
     }
