@@ -7,6 +7,7 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { validateEmail } from '../../utils/validationConstants';
 
 const LoginPage = () => {
   const [password, setPassword] = useState('');
@@ -20,7 +21,7 @@ const LoginPage = () => {
 
   const handleSignIn = () => {
 
-    if (!checkIsEmpty(email) && !checkIsEmpty(password)) {
+    if (validateEmail(email) && !checkIsEmpty(password) ) {
       signInUser(email, password).then((res) => {
 
         if (res) {

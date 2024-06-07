@@ -174,11 +174,11 @@ const TableComponent = (props: any) => {
                 </div>
             }
 
-            {data && data.length > 0 && showAddButton &&
+            {data && showAddButton &&
                 <div className={styles.addButtonContainer}>
                     <div className={styles.addButton}>
                         <ControlPointIcon sx={{ fontSize: iconSize }} />
-                        <button className={styles.addButtonText} onClick={() => toggleModal({ tableTitle })}>Add More</button>
+                        <button className={styles.addButtonText} onClick={() => toggleModal({ tableTitle })}>{data.length == 0 ? 'Add New Data' : 'Add More' }</button>
                     </div>
                 </div>
             }

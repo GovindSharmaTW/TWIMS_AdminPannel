@@ -33,8 +33,9 @@ import { useDispatch } from 'react-redux';
 import { addBrandName, addClient, addDeveloper, addInventoryItem, addProjectOwner } from '../../redux/inventorySlice';
 import { checkIsEmpty, checkIsObjectEmpty } from '../../utils';
 import ModalComponent from '../../components/ModalComponent';
-import { getDatabase, ref, onValue, set, push } from "firebase/database";
+import { getDatabase, ref, onValue, set, push, update } from "firebase/database";
 import { toast } from 'react-toastify';
+import { validateEmail, validatePhone } from '../../utils/validationConstants';
 
 const drawerWidth = 240;
 
@@ -123,7 +124,10 @@ export default function SideNavBar() {
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const [modalChildType, setModalChildType] = React.useState('');
   const [item, setItem] = React.useState('');
-  const [client, setClient] = React.useState('');
+  const [itemQty, setItemQty] = React.useState('0');
+  const [clientName, setClientName] = React.useState('');
+  const [clientEmail, setClientEmail] = React.useState('');
+  const [clientPhone, setClientPhone] = React.useState('');
   const [brand, setBrand] = React.useState('');
   const [proOwnEmail, setProOwnEmail] = React.useState('');
   const [proOwnName, setProOwnName] = React.useState('');
@@ -134,6 +138,7 @@ export default function SideNavBar() {
   const [updateData, setUpdateData] = React.useState({});
   const [isUpdate, setIsUpdate] = React.useState(false);
   const [isEditable, setIsEditable] = React.useState(false);
+  const [isDisable, setIsDisable] = React.useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -152,7 +157,7 @@ export default function SideNavBar() {
 
     dataKeys.map((key, index) => {
       if (type === 'inventoryItem') {
-        tempData.push({ name: data[key].itemName, code: `#000${index + 1}`, qty: 12, image: inventory, id: key.toString() });
+        tempData.push({ name: data[key].itemName, qty: data[key].qty, image: inventory, id: key.toString() });
       }
       else if (type === 'brandName') {
         tempData.push({ code: `#000${index + 1}`, name: data[key].brandName, id: key.toString() });
@@ -168,7 +173,7 @@ export default function SideNavBar() {
         tempData.push({ S_No: index + 1, ass_item: data[key].item, item_image_urls: data[key].imageUri, brand_name: data[key].itemBrandName, from_client: data[key].fromClient, client_name: data[key].clientName, pro_owner: data[key].projectOwnerName, developer: data[key].developer, assigned_date: data[key].assignedDate, id: key.toString() });
       }
       else if (type === 'client') {
-        tempData.push({ S_No: index + 1, name: data[key].clientName, email: 'karigar@gmail.com', contact: 9873747433, id: key.toString() });
+        tempData.push({ S_No: index + 1, name: data[key].clientName, email: data[key].email, contact: data[key].phone, id: key.toString() });
       }
     })
 
@@ -197,7 +202,6 @@ export default function SideNavBar() {
     }
   }
 
-  console.log('inventoryTableData keys is', inventoryTableData);
 
 
   React.useEffect(() => {
@@ -343,10 +347,22 @@ export default function SideNavBar() {
     }
   }, [assignedInvTableData]);
 
+  const validateData = (data: {}) => {
+    const dataKeys = Object.keys(data);
+
+    const isEmpty = dataKeys.map((key) => {
+      return !checkIsEmpty(data[key])
+    })
+
+    return isEmpty.find((item) => item === false);
+  }
+
   const clearAllStates = () => {
     setIsModalVisible(false);
     setItem('');
-    setClient('');
+    setClientName('');
+    setClientEmail('');
+    setClientPhone('');
     setBrand('');
     setProOwnEmail('');
     setProOwnName('');
@@ -354,9 +370,13 @@ export default function SideNavBar() {
     setDevEmail('');
     setDevName('');
     setDevPhone('');
+    setIsDisable(false);
+    setItemQty(0);
   }
 
-  const addDataToDB = (type: string, operationType: string) => {
+  console.log("isdisable",isDisable);
+
+  const addDataToDB = async (type: string, operationType: string) => {
 
     console.log("TT01 addDataToDB type operationType", type, operationType);
 
@@ -366,7 +386,8 @@ export default function SideNavBar() {
     if (type == 'item') {
       data =
       {
-        itemName: item
+        itemName: item,
+        qty: itemQty
       }
       ref = inventoryItemsRef
     }
@@ -380,7 +401,9 @@ export default function SideNavBar() {
     else if (type == 'client') {
       data =
       {
-        clientName: client
+        clientName: clientName,
+        email: clientEmail,
+        phone: clientPhone
       }
       ref = clientsRef
     }
@@ -403,43 +426,69 @@ export default function SideNavBar() {
       ref = developerRef
     }
 
+    if (operationType == 'update') {
 
-    if (!checkIsObjectEmpty(data)) {
+      const isDataValid = validateData(data);
 
-      if (operationType == 'update') {
+      if (isDataValid !== false) {
         updateFirebaseDBData(ref, updateData.id, data)
           .then(() => {
             clearAllStates();
           });
       }
       else {
-        const dataKeys = Object.keys(data);
-
-        const isEmpty = dataKeys.map((key) => {
-          if (checkIsEmpty(data[key])) {
-            return false;
-          }
-          else {
-            return true
-          }
-        })
-
-        const isDataValid = isEmpty.find((item) => item === false);
-
-        if (isDataValid !== false) {
-          addDataToFirebaseDB(data, ref)
-            .then(() => {
-              clearAllStates();
-            })
-        }
-        else {
-          toast.error('All data is required');
-        }
+        toast.error('All data is required');
       }
-
     }
     else {
-      toast.error('Please Enter Valid Data')
+
+      const isDataValid = validateData(data);
+
+      if (isDataValid !== false) {
+
+        if (type == 'developer') {
+          if (!validateEmail(devEmail)) {
+            toast.error('Invalid email');
+            return;
+          }
+          else if (!validatePhone(devPhone)) {
+            toast.error('Phone no. should contain 10 digits');
+            return;
+          }
+        }
+
+        else if (type == 'proOwner') {
+          if (!validateEmail(proOwnEmail)) {
+            toast.error('Invalid email');
+            return;
+          }
+          else if (!validatePhone(proOwnPhone)) {
+            toast.error('Phone no. should contain 10 digits');
+            return;
+          }
+        }
+        else if (type == 'client') {
+          if (!validateEmail(clientEmail)) {
+            toast.error('Invalid email');
+            return;
+          }
+          else if (!validatePhone(clientPhone)) {
+            toast.error('Phone no. should contain 10 digits');
+            return;
+          }
+        }
+
+        setIsDisable(true);
+
+
+        addDataToFirebaseDB(data, ref)
+          .then(() => {
+            clearAllStates();
+          })
+      }
+      else {
+        toast.error('All data is required');
+      }
     }
   }
 
@@ -494,6 +543,7 @@ export default function SideNavBar() {
 
     if (!checkIsObjectEmpty(updateData) && !isEditable) {
       setItem(updateData.name);
+      setItemQty(updateData.qty);
     }
 
     return (
@@ -505,8 +555,15 @@ export default function SideNavBar() {
           <input name="myInput" className='modelInputStyle' onChange={(e) => { setItem(e.target.value), setIsEditable(true) }} value={item} placeholder='Enter item name' />
         </div>
 
+        <div className='modellnputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Qty:
+          </label>
+          <input name="myInput" className='modelInputStyle' onChange={(e) => { setItemQty(e.target.value), setIsEditable(true) }} value={itemQty} placeholder='Enter item name' />
+        </div>
+
         <div className='addButtonSecContainer'>
-          <button className='buttonText' onClick={() => addDataToDB('item', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
+          <button disabled={isDisable} className='buttonText' onClick={() => addDataToDB('item', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
         </div>
 
       </div>
@@ -527,7 +584,7 @@ export default function SideNavBar() {
         </div>
 
         <div className='addButtonSecContainer'>
-          <button className='buttonText' onClick={() => addDataToDB('brand', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
+          <button disabled={isDisable} className='buttonText' onClick={() => addDataToDB('brand', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
         </div>
 
       </div>
@@ -535,7 +592,10 @@ export default function SideNavBar() {
   }
   const addClientModalChildComponent = () => {
     if (!checkIsObjectEmpty(updateData) && !isEditable) {
-      setClient(updateData.name);
+      setClientName(updateData.name);
+      setClientEmail(updateData.email);
+      setClientPhone(updateData.contact);
+
     }
     return (
       <div>
@@ -543,12 +603,25 @@ export default function SideNavBar() {
           <label className='inputLabelStyle'>
             Client Name :
           </label>
-          <input name="myInput" className='modelInputStyle' onChange={(e) => { setClient(e.target.value), setIsEditable(true) }} value={client} placeholder='Enter client name' />
+          <input name="myInput" className='modelInputStyle' onChange={(e) => { setClientName(e.target.value), setIsEditable(true) }} value={clientName} placeholder='Enter client name' />
+        </div>
 
+        <div className='modellnputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Client Email :
+          </label>
+          <input name="myInput" className='modelInputStyle' onChange={(e) => { setClientEmail(e.target.value), setIsEditable(true) }} value={clientEmail} placeholder='Enter client name' />
+        </div>
+
+        <div className='modellnputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Client Phone No. :
+          </label>
+          <input name="myInput" className='modelInputStyle' onChange={(e) => { setClientPhone(e.target.value), setIsEditable(true) }} value={clientPhone} placeholder='Enter client name' />
         </div>
 
         <div className='addButtonSecContainer'>
-          <button className='buttonText' onClick={() => addDataToDB('client', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
+          <button disabled={isDisable} className='buttonText' onClick={() => addDataToDB('client', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
         </div>
 
       </div>
@@ -582,7 +655,7 @@ export default function SideNavBar() {
         </div>
 
         <div className='addButtonSecContainer'>
-          <button className='buttonText' onClick={() => addDataToDB('proOwner', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
+          <button disabled={isDisable} className='buttonText' onClick={() => addDataToDB('proOwner', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
         </div>
 
       </div>
@@ -618,7 +691,7 @@ export default function SideNavBar() {
         </div>
 
         <div className='addButtonSecContainer'>
-          <button className='buttonText' onClick={() => addDataToDB('developer', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
+          <button disabled={isDisable} className='buttonText' onClick={() => addDataToDB('developer', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
         </div>
 
       </div>
@@ -693,7 +766,7 @@ export default function SideNavBar() {
         <ModalComponent childComponent={getModalChildComponent} openModal={isModalVisible} handleModalClose={handleModalClose} />
 
 
-        {(selectedTab === 'Inventory' && inventoryTableData.length > 0 && brandNameTableData.length > 0) &&
+        {selectedTab === 'Inventory' &&
           <>
             <TableComponent data={inventoryTableData} showActionButtons={true} tableTitle={'Item List'} toggleModal={handleModalClose} showAddButton={true} />
 
@@ -707,18 +780,18 @@ export default function SideNavBar() {
           <ProfilePage />
         }
 
-        {(selectedTab === 'Employees' && projectOwnerTableData.length > 0 && developerTableData.length > 0) &&
+        {selectedTab === 'Employees' &&
           <>
             <TableComponent data={projectOwnerTableData} showActionButtons={true} tableTitle={'Project-Owner List'} toggleModal={handleModalClose} showAddButton={true} />
             <TableComponent data={developerTableData} showActionButtons={true} tableTitle={'Developer List'} toggleModal={handleModalClose} showAddButton={true} />
           </>
         }
 
-        {(selectedTab === 'Clients' && clientTableData.length > 0) &&
+        {selectedTab === 'Clients' &&
           <TableComponent data={clientTableData} showActionButtons={true} tableTitle={'Client List'} toggleModal={handleModalClose} showAddButton={true} />
         }
 
-        {(selectedTab === 'Assigned Inventory' && assignedInvTableData.length > 0) &&
+        {selectedTab === 'Assigned Inventory' &&
           <TableComponent data={assignedInvTableData} showActionButtons={true} tableTitle={'Assigned Inventory List'} toggleModal={handleModalClose} showAddButton={false} />
         }
 
