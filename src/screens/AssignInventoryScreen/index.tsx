@@ -6,6 +6,10 @@ import { RootState } from '../../redux/store';
 import { getCurrentDate } from '../../utils';
 import { assignedItemDetailsRef } from '../../firebase/firebaseConstants';
 import styles from './styles.module.css';
+import ReactImagePickerEditor, { ImagePickerConf } from 'react-image-picker-editor';
+import 'react-image-picker-editor/dist/index.css'
+import { ImagePicker } from '@abak/react-image-picker';
+import MultipleImagePicker from '../../components/MultipleImagePicker';
 
 const AssignInventoryScreen = () => {
   const [itemData, setItemData] = useState([]);
@@ -19,7 +23,20 @@ const AssignInventoryScreen = () => {
   const [selectedDeveloper, setSelectedDeveloper] = useState('');
   const [selectedProjectOwner, setSelectedProjectOwner] = useState('');
   const [selectedClient, setSelectedClient] = useState('');
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [imageSrc, setImageSrc] = useState(null);
 
+
+  const config2: ImagePickerConf = {
+    borderRadius: '8px',
+    language: 'en',
+    width: '100%',
+    height: '100%',
+    objectFit: 'contain',
+    compressInitial: null,
+  };
+  // const initialImage: string = '/assets/images/8ptAya.webp';
+  const initialImage = '';
 
   const addDataToDB = () => {
     const data =
@@ -107,6 +124,32 @@ const AssignInventoryScreen = () => {
     }
   }, [clientsData])
 
+  console.log("immagesource is", imageSrc
+
+  );
+
+  const onChangeFile = (e: any) => {
+    console.log("onChangeFile calling", e);
+  }
+
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+
+    console.log("TT02 handle file change", file);
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        console.log("inside result file is", reader.result);
+        setImageSrc(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  console.log("TT01 imageSrc", imageSrc);
+
 
   return (
     <div className={styles.baseContainer}>
@@ -131,6 +174,10 @@ const AssignInventoryScreen = () => {
 
         <div className={styles.dropDownContainer}>
           <DropDownComponent label={'Developer'} optionsData={developerNameData} selectedValue={setSelectedDeveloper} />
+        </div>
+
+        <div className={styles.imagePickerContainer}>
+          <MultipleImagePicker />
         </div>
 
         <div className={styles.saveButtonContainer} >

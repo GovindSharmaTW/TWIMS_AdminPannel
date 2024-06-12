@@ -2,8 +2,8 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { getDatabase, ref, onValue, set, push, remove, update } from "firebase/database";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import {  ref as sRef, uploadBytes, getDownloadURL, getStorage } from 'firebase/storage';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -25,6 +25,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
+const storage = getStorage(app);
 
 
 export const signInUser = (email: any, password: any) => {
@@ -123,9 +124,21 @@ export const updateFirebaseDBData = (dbRef: string, id: string, data: {}) => {
                 resolve(false);
                 toast.error(`Something went wrong ${error}`);
             })
-
     })
-
 }
 
+export const handleUpload = (image:any) => {
+    console.log("TT01 handleUpload calling",image);
+    if (image) {
+      const storageRef = sRef(storage, `images/${image}`);
+      uploadBytes(storageRef, image).then((snapshot) => {
+        getDownloadURL(snapshot.ref).then((downloadURL) => {
+        //   setUrl(downloadURL);
+        console.log('TT01 downloadURL is',downloadURL);
+        });
+      }).catch((error) => {
+        console.error("Error uploading image: ", error);
+      });
+    }
+  };
 
