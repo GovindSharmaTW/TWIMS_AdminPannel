@@ -27,10 +27,10 @@ import AssignInventoryScreen from '../AssignInventoryScreen';
 import TableComponent from '../../components/TableComponent';
 import ProfilePage from '../profile';
 import { addDataToFirebaseDB, updateFirebaseDBData } from '../../firebase';
-import { assignedItemDetailsRef, clientsRef, developerRef, inventoryItemsBrandNameRef, inventoryItemsRef, projectOwnerRef } from '../../firebase/firebaseConstants';
+import { assignedItemDetailsRef, clientsRef, developerRef, inventoryItemsBrandNameRef, inventoryItemsRef, projectOwnerRef, simCompNameRef, simNumberRef } from '../../firebase/firebaseConstants';
 import './style.css'
 import { useDispatch } from 'react-redux';
-import { addBrandName, addClient, addDeveloper, addInventoryItem, addProjectOwner } from '../../redux/inventorySlice';
+import { addBrandName, addClient, addDeveloper, addInventoryItem, addProjectOwner, addSimCompName, addSimNumber } from '../../redux/inventorySlice';
 import { checkIsEmpty, checkIsObjectEmpty } from '../../utils';
 import ModalComponent from '../../components/ModalComponent';
 import { getDatabase, ref, onValue, set, push, update } from "firebase/database";
@@ -120,6 +120,9 @@ export default function SideNavBar() {
   const [projectOwnerTableData, setProjectOwnerTableData] = React.useState([]);
   const [developerTableData, setDeveloperTableData] = React.useState([]);
   const [assignedInvTableData, setAssignedInvTableData] = React.useState([]);
+  const [simCompNameTableData, setSimCompNameTableData] = React.useState([]);
+  const [simNumberTableData, setSimNumberTableData] = React.useState([]);
+
   const [clientTableData, setClientTableData] = React.useState([]);
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const [modalChildType, setModalChildType] = React.useState('');
@@ -135,6 +138,8 @@ export default function SideNavBar() {
   const [devEmail, setDevEmail] = React.useState('');
   const [devName, setDevName] = React.useState('');
   const [devPhone, setDevPhone] = React.useState('');
+  const [simNumber, setSimNumber] = React.useState('');
+  const [simCompName, setSimCompName] = React.useState('');
   const [updateData, setUpdateData] = React.useState({});
   const [isUpdate, setIsUpdate] = React.useState(false);
   const [isEditable, setIsEditable] = React.useState(false);
@@ -177,6 +182,12 @@ export default function SideNavBar() {
       else if (type === 'client') {
         tempData.push({ S_No: index + 1, name: data[key].clientName, email: data[key].email, contact: data[key].phone, id: key.toString() });
       }
+      else if (type === 'simNumber') {
+        tempData.push({ S_No: index + 1, number: data[key].simNumber, id: key.toString() });
+      }
+      else if (type === 'simCompName') {
+        tempData.push({ S_No: index + 1, sim_company_name: data[key].simCompanyName, id: key.toString() });
+      }
     })
 
     if (type == 'inventoryItem') {
@@ -201,6 +212,14 @@ export default function SideNavBar() {
     else if (type === 'client') {
       setClientTableData(tempData);
       dispatch(addClient(tempData))
+    }
+    else if (type === 'simNumber') {
+      setSimNumberTableData(tempData);
+      dispatch(addSimNumber(tempData));
+    }
+    else if (type === 'simCompName') {
+      setSimCompNameTableData(tempData);
+      dispatch(addSimCompName(tempData));
     }
   }
 
@@ -258,6 +277,23 @@ export default function SideNavBar() {
       }
     });
 
+    const simCompNameDBRef = ref(db, simCompNameRef);
+    const unsubscribeSimCompNameRef = onValue(simCompNameDBRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        createTableData(data, 'simCompName');
+      }
+    });
+
+    const simNumberDBRef = ref(db, simNumberRef);
+    const unsubscribeSimNumberRef = onValue(simNumberDBRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        createTableData(data, 'simNumber');
+
+      }
+    });
+
     return () => {
       unsubscribeInventoryRef();
       unsubscribeBrandRef();
@@ -265,6 +301,8 @@ export default function SideNavBar() {
       unsubscribeProOwnRef();
       unsubscribeDevRef();
       unsubscribeAssignedDataRef();
+      unsubscribeSimCompNameRef();
+      unsubscribeSimNumberRef();
     }
   }, [])
 
@@ -358,6 +396,8 @@ export default function SideNavBar() {
     setDevPhone('');
     setIsDisable(false);
     setItemQty(0);
+    setSimCompName('');
+    setSimNumber('');
   }
 
 
@@ -407,6 +447,20 @@ export default function SideNavBar() {
         phone: devPhone
       }
       ref = developerRef
+    }
+    else if (type == 'simNumber') {
+      data =
+      {
+        simNumber: simNumber,
+      }
+      ref = simNumberRef
+    }
+    else if (type == 'simCompName') {
+      data =
+      {
+        simCompanyName: simCompName
+      }
+      ref = simCompNameRef
     }
 
     if (operationType == 'update') {
@@ -477,11 +531,7 @@ export default function SideNavBar() {
 
 
   const handleModalClose = (props: any) => {
-
-
     const { tableTitle, val } = props;
-
-
 
     setIsModalVisible(!isModalVisible);
     setModalChildType(tableTitle);
@@ -499,7 +549,6 @@ export default function SideNavBar() {
 
   const getModalChildComponent = () => {
 
-
     if (modalChildType == 'Item List') {
       return (addItemModalChildComponent())
     }
@@ -514,6 +563,12 @@ export default function SideNavBar() {
     }
     else if (modalChildType == 'Client List') {
       return (addClientModalChildComponent())
+    }
+    else if (modalChildType == 'Sim Numbers') {
+      return (addSimNumModalChildComponent())
+    }
+    else if (modalChildType == 'Sim Company Names') {
+      return (addSimCompNameModalChildComponent())
     }
   }
 
@@ -600,6 +655,48 @@ export default function SideNavBar() {
 
         <div className='addButtonSecContainer'>
           <button disabled={isDisable} className='buttonText' onClick={() => addDataToDB('client', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
+        </div>
+
+      </div>
+    )
+  }
+
+  const addSimCompNameModalChildComponent = () => {
+    if (!checkIsObjectEmpty(updateData) && !isEditable) {
+      setSimCompName(updateData.sim_company_name);
+    }
+    return (
+      <div>
+        <div className='modellnputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Sim Company Name :
+          </label>
+          <input name="myInput" className='modelInputStyle' onChange={(e) => { setSimCompName(e.target.value), setIsEditable(true) }} value={simCompName} placeholder='Enter company name' />
+        </div>
+
+        <div className='addButtonSecContainer'>
+          <button disabled={isDisable} className='buttonText' onClick={() => addDataToDB('simCompName', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
+        </div>
+
+      </div>
+    )
+  }
+
+  const addSimNumModalChildComponent = () => {
+    if (!checkIsObjectEmpty(updateData) && !isEditable) {
+      setSimNumber(updateData.number);
+    }
+    return (
+      <div>
+        <div className='modellnputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Sim Number :
+          </label>
+          <input name="myInput" className='modelInputStyle' onChange={(e) => { setSimNumber(e.target.value), setIsEditable(true) }} value={simNumber} placeholder='Enter number' />
+        </div>
+
+        <div className='addButtonSecContainer'>
+          <button disabled={isDisable} className='buttonText' onClick={() => addDataToDB('simNumber', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
         </div>
 
       </div>
@@ -749,6 +846,10 @@ export default function SideNavBar() {
             <TableComponent data={inventoryTableData} showActionButtons={true} tableTitle={'Item List'} toggleModal={handleModalClose} showAddButton={true} />
 
             <TableComponent data={brandNameTableData} showActionButtons={true} tableTitle={'Brand List'} toggleModal={handleModalClose} showAddButton={true} />
+
+            <TableComponent data={simNumberTableData} showActionButtons={true} tableTitle={'Sim Numbers'} toggleModal={handleModalClose} showAddButton={true} />
+
+            <TableComponent data={simCompNameTableData} showActionButtons={true} tableTitle={'Sim Company Names'} toggleModal={handleModalClose} showAddButton={true} />
           </>
 
         }

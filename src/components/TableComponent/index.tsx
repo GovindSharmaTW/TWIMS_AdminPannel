@@ -7,7 +7,7 @@ import { useMediaQuery } from '@mui/material';
 import { useEffect, useState } from 'react';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { assignedItemDetailsRef, clientsRef, developerRef, inventoryItemsBrandNameRef, inventoryItemsRef, projectOwnerRef } from '../../firebase/firebaseConstants';
+import { assignedItemDetailsRef, clientsRef, developerRef, inventoryItemsBrandNameRef, inventoryItemsRef, projectOwnerRef, simCompNameRef, simNumberRef } from '../../firebase/firebaseConstants';
 import { deleteDataFromFirebaseDB } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
 import ModalComponent from '../ModalComponent';
@@ -43,10 +43,10 @@ const TableComponent = (props: any) => {
     }, [data])
 
     const openShowDetailScreen = (item: object) => {
-        if(item.ass_items !== undefined){
+        if (item.ass_items !== undefined) {
             navigate("/ShowDetail", { state: { data: item } })
         }
-        else{
+        else {
             toast.error('No Data found to display')
         }
     }
@@ -72,6 +72,12 @@ const TableComponent = (props: any) => {
         }
         else if (tableType == 'Client List') {
             dbRef = clientsRef;
+        }
+        else if (tableType == 'Sim Numbers') {
+            dbRef = simNumberRef;
+        }
+        else if (tableType == 'Sim Company Names') {
+            dbRef = simCompNameRef;
         }
 
         deleteDataFromFirebaseDB(dbRef, id);
@@ -178,7 +184,7 @@ const TableComponent = (props: any) => {
                 <div className={styles.addButtonContainer}>
                     <div className={styles.addButton}>
                         <ControlPointIcon sx={{ fontSize: iconSize }} />
-                        <button className={styles.addButtonText} onClick={() => toggleModal({ tableTitle })}>{data.length == 0 ? 'Add New Data' : 'Add More' }</button>
+                        <button className={styles.addButtonText} onClick={() => toggleModal({ tableTitle })}>{data.length == 0 ? 'Add New Data' : 'Add More'}</button>
                     </div>
                 </div>
             }
