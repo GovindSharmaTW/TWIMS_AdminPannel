@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import DropDownComponent from '../../components/DropDownComponent';
-import { addDataToFirebaseDB } from '../../firebase';
+import { addDataToFirebaseDB, handleUpload } from '../../firebase';
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../../redux/store';
 import { getCurrentDate } from '../../utils';
@@ -10,6 +10,8 @@ import ReactImagePickerEditor, { ImagePickerConf } from 'react-image-picker-edit
 import 'react-image-picker-editor/dist/index.css'
 import { ImagePicker } from '@abak/react-image-picker';
 import MultipleImagePicker from '../../components/MultipleImagePicker';
+import { validateData } from '../../utils/validationConstants';
+import { toast } from 'react-toastify';
 
 const AssignInventoryScreen = () => {
   const [itemData, setItemData] = useState([]);
@@ -23,9 +25,10 @@ const AssignInventoryScreen = () => {
   const [selectedDeveloper, setSelectedDeveloper] = useState('');
   const [selectedProjectOwner, setSelectedProjectOwner] = useState('');
   const [selectedClient, setSelectedClient] = useState('');
-  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [selectedImages, setSelectedImages] = useState([]);
   const [imageSrc, setImageSrc] = useState(null);
-
+  const [isDisable, setIsDisable] = useState(false);
+  const [resetDropdown, setResetDropdown] = useState(false);
 
   const config2: ImagePickerConf = {
     borderRadius: '8px',
@@ -38,7 +41,8 @@ const AssignInventoryScreen = () => {
   // const initialImage: string = '/assets/images/8ptAya.webp';
   const initialImage = '';
 
-  const addDataToDB = () => {
+  const addDataToDB = async () => {
+    setIsDisable(true);
     const data =
     {
       item: selectedItem,
@@ -49,11 +53,34 @@ const AssignInventoryScreen = () => {
       projectOwnerName: selectedProjectOwner,
       developer: selectedDeveloper,
       assignedDate: getCurrentDate(),
-      imageUri: 'Image test uri from web',
-      simCompanyName: '',
-      simNumber: ''
+      // simCompanyName: '',
+      // simNumber: '',
+      imageUri: [],
     }
-    addDataToFirebaseDB(data, assignedItemDetailsRef);
+
+    if (selectedImages.length > 0) {
+      handleUpload(selectedImages).then((res) => {
+        addAssignedData({ ...data, imageUri: res });
+      });
+    }
+    else {
+      addAssignedData(data);
+    }
+  }
+
+  const addAssignedData = (data: {}) => {
+
+    const isValid = validateData(data);
+
+    if (isValid !== false) {
+      addDataToFirebaseDB(data, assignedItemDetailsRef).then((res) => {
+        clearAllData();
+      });
+    }
+    else {
+      toast.error('All data is required');
+      setIsDisable(false);
+    }
   }
 
   const inventoryItemData = useSelector((state: RootState) => state.inventory.inventoryItems);
@@ -61,7 +88,6 @@ const AssignInventoryScreen = () => {
   const projectOwnersData = useSelector((state: RootState) => state.inventory.projectOwners);
   const developersData = useSelector((state: RootState) => state.inventory.developers);
   const clientsData = useSelector((state: RootState) => state.inventory.clients);
-
 
   const createDropdownData = (data: object[], type: object[]) => {
     const temp = [];
@@ -88,6 +114,17 @@ const AssignInventoryScreen = () => {
     // type = [...new Set(type)]
 
 
+  }
+
+  const clearAllData = () => {
+    setSelectedImages([]);
+    setSelectedItem('');
+    setSelectedItemBrandName('');
+    setSelectedClient('');
+    setSelectedDeveloper('');
+    setSelectedProjectOwner('');
+    setIsDisable(false);
+    setResetDropdown(!resetDropdown);
   }
 
   useEffect(() => {
@@ -124,31 +161,10 @@ const AssignInventoryScreen = () => {
     }
   }, [clientsData])
 
-  console.log("immagesource is", imageSrc
 
-  );
-
-  const onChangeFile = (e: any) => {
-    console.log("onChangeFile calling", e);
+  const handleImageChange = (images: []) => {
+    setSelectedImages(images);
   }
-
-
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-
-    console.log("TT02 handle file change", file);
-
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        console.log("inside result file is", reader.result);
-        setImageSrc(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  console.log("TT01 imageSrc", imageSrc);
 
 
   return (
@@ -157,31 +173,31 @@ const AssignInventoryScreen = () => {
         <h1 className={styles.title}>Assign Inventory</h1>
         <div className={styles.separator} />
         <div className={styles.dropDownContainer}>
-          <DropDownComponent label={'Item'} optionsData={itemData} selectedValue={(value: string) => setSelectedItem(value)} />
+          <DropDownComponent label={'Item'} optionsData={itemData} resetSelectedValue = {resetDropdown} selectedValue={(value: string) => setSelectedItem(value)} />
         </div>
 
         <div className={styles.dropDownContainer}>
-          <DropDownComponent label={'Item Brand Name'} optionsData={itemBrandNameData} selectedValue={(value: string) => setSelectedItemBrandName(value)} />
+          <DropDownComponent label={'Item Brand Name'} optionsData={itemBrandNameData} resetSelectedValue = {resetDropdown} selectedValue={(value: string) => setSelectedItemBrandName(value)} />
         </div>
 
         <div className={styles.dropDownContainer}>
-          <DropDownComponent label={'Client Name'} optionsData={clientNameData} selectedValue={(value: string) => setSelectedClient(value)} />
+          <DropDownComponent label={'Client Name'} optionsData={clientNameData} resetSelectedValue = {resetDropdown} selectedValue={(value: string) => setSelectedClient(value)} />
         </div>
 
         <div className={styles.dropDownContainer}>
-          <DropDownComponent label={'Project Owner'} optionsData={projectOwnerNameData} selectedValue={(value: string) => setSelectedProjectOwner(value)} />
+          <DropDownComponent label={'Project Owner'} optionsData={projectOwnerNameData} resetSelectedValue = {resetDropdown} selectedValue={(value: string) => setSelectedProjectOwner(value)} />
         </div>
 
         <div className={styles.dropDownContainer}>
-          <DropDownComponent label={'Developer'} optionsData={developerNameData} selectedValue={setSelectedDeveloper} />
+          <DropDownComponent label={'Developer'} optionsData={developerNameData}  resetSelectedValue = {resetDropdown}selectedValue={setSelectedDeveloper} />
         </div>
 
         <div className={styles.imagePickerContainer}>
-          <MultipleImagePicker />
+          <MultipleImagePicker resetSelectedImages={resetDropdown} onPickedImageChanges={(images: []) => handleImageChange(images)} />
         </div>
 
         <div className={styles.saveButtonContainer} >
-          <button className={styles.saveButton} onClick={addDataToDB}>Save Data</button>
+          <button disabled={isDisable} className={styles.saveButton} onClick={addDataToDB}>Save Data</button>
         </div>
       </div>
     </div>

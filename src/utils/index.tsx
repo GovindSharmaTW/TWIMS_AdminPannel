@@ -1,9 +1,15 @@
 export const checkIsEmpty = (value: any) => {
-    if (value == undefined || value == null || value.trim() == '') {
-        return true;
-    }
-    else {
 
+    if (typeof (value) !== 'object' && typeof (value) !== 'boolean') {
+        if (value == undefined || value == null || value.trim() == '') {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    else
+    {
         return false;
     }
 }

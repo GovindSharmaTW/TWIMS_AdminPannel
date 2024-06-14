@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
 export default function DropDownComponent(props) {
 
-  const { label, optionsData, selectedValue } = props;
+  const { label, optionsData, selectedValue, resetSelectedValue } = props;
 
   const [value, setValue] = useState<string | null>('Select');
   const [inputValue, setInputValue] = useState('');
+
+  useEffect(() => {
+    setInputValue('');
+    setValue('Select');
+  }, [resetSelectedValue])
 
   return (
     <div>

@@ -35,7 +35,7 @@ import { checkIsEmpty, checkIsObjectEmpty } from '../../utils';
 import ModalComponent from '../../components/ModalComponent';
 import { getDatabase, ref, onValue, set, push, update } from "firebase/database";
 import { toast } from 'react-toastify';
-import { validateEmail, validatePhone } from '../../utils/validationConstants';
+import { validateData, validateEmail, validatePhone } from '../../utils/validationConstants';
 
 const drawerWidth = 240;
 
@@ -150,8 +150,6 @@ export default function SideNavBar() {
 
   const createTableData = (data: any, type: string) => {
 
-    console.log("TT01 createTableData is", data, type);
-
     const tempData: any = [];
     const dataKeys = Object.keys(data);
 
@@ -170,7 +168,11 @@ export default function SideNavBar() {
         tempData.push({ S_No: index + 1, name: data[key].name, email: data[key].email, contact: data[key].phone, id: key.toString() });
       }
       else if (type === 'assignedData') {
-        tempData.push({ S_No: index + 1, ass_item: data[key].item, item_image_urls: data[key].imageUri, brand_name: data[key].itemBrandName, from_client: data[key].fromClient, client_name: data[key].clientName, pro_owner: data[key].projectOwnerName, developer: data[key].developer, assigned_date: data[key].assignedDate, id: key.toString() });
+        tempData.push({
+          S_No: index + 1, ass_item: data[key].item, item_image_urls: data[key].imageUri, brand_name: data[key].itemBrandName,
+          from_client: data[key].fromClient, client_name: data[key].clientName, pro_owner: data[key].projectOwnerName,
+          developer: data[key].developer, assigned_date: data[key].assignedDate, id: key.toString()
+        });
       }
       else if (type === 'client') {
         tempData.push({ S_No: index + 1, name: data[key].clientName, email: data[key].email, contact: data[key].phone, id: key.toString() });
@@ -257,7 +259,6 @@ export default function SideNavBar() {
     });
 
     return () => {
-      console.log("TT-01");
       unsubscribeInventoryRef();
       unsubscribeBrandRef();
       unsubscribeClientRef();
@@ -270,8 +271,6 @@ export default function SideNavBar() {
   React.useEffect(() => {
     if (assignedInvTableData.length > 0) {
 
-      console.log("TT01 assignedInvTableData", assignedInvTableData);
-
       const userMap = new Map();
 
       assignedInvTableData.forEach(item => {
@@ -282,7 +281,7 @@ export default function SideNavBar() {
             totalProject: 0,
             totalAssignedItem: 0,
             assignedItems: [],
-            clients: []
+            clients: [],
           });
         }
 
@@ -315,11 +314,8 @@ export default function SideNavBar() {
 
           const developerData = finalData.find(tempItem => tempItem.name === extensibleItem.name);
 
-          console.log("TT01 outside developerTableData", developerTableData);
-          console.log("TT01 outside developerData", developerData);
 
           if (developerData) {
-            console.log("TT01 inside developerData", developerData);
 
             if (developerData.totalAssignedItem) {
               extensibleItem.total_ass_item = developerData.totalAssignedItem;
@@ -343,19 +339,9 @@ export default function SideNavBar() {
         setDeveloperTableData(updatedDeveloperTableData); // Update the state with the new array
       }
 
-      console.log("finaldata is", finalData);
     }
   }, [assignedInvTableData]);
 
-  const validateData = (data: {}) => {
-    const dataKeys = Object.keys(data);
-
-    const isEmpty = dataKeys.map((key) => {
-      return !checkIsEmpty(data[key])
-    })
-
-    return isEmpty.find((item) => item === false);
-  }
 
   const clearAllStates = () => {
     setIsModalVisible(false);
@@ -374,11 +360,8 @@ export default function SideNavBar() {
     setItemQty(0);
   }
 
-  console.log("isdisable",isDisable);
 
   const addDataToDB = async (type: string, operationType: string) => {
-
-    console.log("TT01 addDataToDB type operationType", type, operationType);
 
     let data = {};
     let ref = '';
@@ -495,24 +478,20 @@ export default function SideNavBar() {
 
   const handleModalClose = (props: any) => {
 
-    console.log("TT01 handleModalClose function props are", props);
 
     const { tableTitle, val } = props;
 
-    console.log("TT01 handleModalClose function props val is", val);
 
 
     setIsModalVisible(!isModalVisible);
     setModalChildType(tableTitle);
 
     if (val !== undefined) {
-      console.log('if>>>>361')
       setUpdateData(val);
       setIsUpdate(true);
       setIsEditable(false);
     }
     else {
-      console.log('else>>>>361')
       setUpdateData({});
       setIsUpdate(false);
     }
@@ -520,7 +499,6 @@ export default function SideNavBar() {
 
   const getModalChildComponent = () => {
 
-    console.log("TT01 getModalChildComponent calling", modalChildType);
 
     if (modalChildType == 'Item List') {
       return (addItemModalChildComponent())

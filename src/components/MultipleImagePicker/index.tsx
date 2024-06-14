@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { handleUpload } from '../../firebase';
 import styles from './styles.module.css'
 
-const MultipleImagePicker = () => {
+const MultipleImagePicker = ({ onPickedImageChanges = () => { }, resetSelectedImages }) => {
   const [selectedImages, setSelectedImages] = useState([]);
+  const [images, setImages] = useState([]);
+
 
   useEffect(() => {
     return () => {
@@ -11,8 +13,17 @@ const MultipleImagePicker = () => {
     };
   }, [selectedImages]);
 
-  const handleImageChange = (event) => {
+  useEffect(() => {
+    setSelectedImages([]);
+    onPickedImageChanges([]);
+  }, [resetSelectedImages])
+
+  const handleImageChange = async (event) => {
     const files = Array.from(event.target.files);
+
+    setImages(files);
+    onPickedImageChanges(files);
+
     const images = files.map(file => URL.createObjectURL(file));
     setSelectedImages(images);
   };
@@ -20,11 +31,13 @@ const MultipleImagePicker = () => {
   const removeImage = (index) => {
     URL.revokeObjectURL(selectedImages[index]);
     const newImages = selectedImages.filter((_, i) => i !== index);
+    const filteredImages = images.filter((_, i) => i !== index);
+
     setSelectedImages(newImages);
+    setImages(filteredImages);
+    onPickedImageChanges(filteredImages);
   };
 
-
-  console.log("TT01 image component selectedImages", selectedImages);
   return (
     <div>
       <input
@@ -66,10 +79,6 @@ const MultipleImagePicker = () => {
           </div>
         ))}
 
-      </div>
-      
-      <div className={styles.saveButtonContainer}>
-        <button className={styles.saveButton} onClick={() => handleUpload(selectedImages[0])}> upload image</button>
       </div>
     </div>
   );

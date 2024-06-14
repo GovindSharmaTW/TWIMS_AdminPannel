@@ -3,7 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { getDatabase, ref, onValue, set, push, remove, update } from "firebase/database";
 import { toast } from "react-toastify";
-import {  ref as sRef, uploadBytes, getDownloadURL, getStorage } from 'firebase/storage';
+import { ref as sRef, uploadBytes, getDownloadURL, getStorage } from 'firebase/storage';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -127,18 +127,29 @@ export const updateFirebaseDBData = (dbRef: string, id: string, data: {}) => {
     })
 }
 
-export const handleUpload = (image:any) => {
-    console.log("TT01 handleUpload calling",image);
-    if (image) {
-      const storageRef = sRef(storage, `images/${image}`);
-      uploadBytes(storageRef, image).then((snapshot) => {
-        getDownloadURL(snapshot.ref).then((downloadURL) => {
-        //   setUrl(downloadURL);
-        console.log('TT01 downloadURL is',downloadURL);
-        });
-      }).catch((error) => {
-        console.error("Error uploading image: ", error);
-      });
-    }
-  };
+export const handleUpload = (image: any) => {
+    const imageUrls: [] = [];
+
+    return new Promise((resolve, reject) => {
+
+        if (image) {
+
+            image.map((item: any, index: number) => {
+
+                const storageRef = sRef(storage, `images/${item.name}`);
+                uploadBytes(storageRef, item).then((snapshot) => {
+                    getDownloadURL(snapshot.ref).then((downloadURL) => {
+                        imageUrls.push({ id: index, ref: item.name, uri: downloadURL });
+                        if (index == Object.keys(image).length - 1) {
+                            resolve(imageUrls)
+                        }
+                    });
+                }).catch((error) => {
+                    toast.error("Error uploading image: ", error);
+                });
+            })
+        }
+    })
+
+};
 
