@@ -3,7 +3,7 @@ import DropDownComponent from '../../components/DropDownComponent';
 import { addDataToFirebaseDB, handleUpload } from '../../firebase';
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../../redux/store';
-import { getCurrentDate } from '../../utils';
+import { checkIsEmpty, getCurrentDate } from '../../utils';
 import { assignedItemDetailsRef } from '../../firebase/firebaseConstants';
 import styles from './styles.module.css';
 import ReactImagePickerEditor, { ImagePickerConf } from 'react-image-picker-editor';
@@ -17,6 +17,8 @@ const AssignInventoryScreen = () => {
   const [itemData, setItemData] = useState([]);
   const [itemBrandNameData, setItemBrandNameData] = useState([]);
   const [clientNameData, setClientNameData] = useState([]);
+  const [simNumberDropdownData, setSimNumberDropdownData] = useState([]);
+  const [simCompNameDropdownData, setSimCompNameDropdownData] = useState([]);
   const [projectOwnerNameData, setProjectOwnerNameData] = useState([]);
   const [developerNameData, setDeveloperNameData] = useState([]);
 
@@ -24,6 +26,8 @@ const AssignInventoryScreen = () => {
   const [selectedItemBrandName, setSelectedItemBrandName] = useState('');
   const [selectedDeveloper, setSelectedDeveloper] = useState('');
   const [selectedProjectOwner, setSelectedProjectOwner] = useState('');
+  const [selectedSimCompName, setSelectedSimCompName] = useState('');
+  const [selectedSimNumber, setSelectedSimNumber] = useState('');
   const [selectedClient, setSelectedClient] = useState('');
   const [selectedImages, setSelectedImages] = useState([]);
   const [imageSrc, setImageSrc] = useState(null);
@@ -47,32 +51,63 @@ const AssignInventoryScreen = () => {
     {
       item: selectedItem,
       itemBrandName: selectedItemBrandName,
-      fromClient: true,
-      fromThoughtWin: false,
+      fromClient: !checkIsEmpty(selectedClient),
+      fromThoughtWin: checkIsEmpty(selectedClient),
       clientName: selectedClient,
       projectOwnerName: selectedProjectOwner,
       developer: selectedDeveloper,
       assignedDate: getCurrentDate(),
-      // simCompanyName: '',
-      // simNumber: '',
       imageUri: [],
     }
 
+    var tempData = { ...data };
+
     if (selectedImages.length > 0) {
       handleUpload(selectedImages).then((res) => {
-        addAssignedData({ ...data, imageUri: res });
+
+        if (res.length > 0) {
+          tempData = { ...tempData, imageUri: res };
+        }
+
+        if (selectedItem == 'SIM') {
+          tempData = { ...tempData, simCompanyName: selectedSimCompName, simNumber: selectedSimNumber }
+        }
+
+        addAssignedData(tempData);
       });
     }
     else {
-      addAssignedData(data);
+      if (selectedItem == 'SIM') {
+        tempData = { ...tempData, simCompanyName: selectedSimCompName, simNumber: selectedSimNumber };
+        addAssignedData(tempData);
+      }
     }
+
   }
 
   const addAssignedData = (data: {}) => {
 
-    const isValid = validateData(data);
+    let isValid = false;
 
-    if (isValid !== false) {
+    if (selectedItem == 'SIM') {
+
+      if (selectedDeveloper !== '' && selectedSimNumber !== '' && selectedSimCompName !== '') {
+        isValid = true;
+      }
+    }
+    else if (selectedClient !== '') {
+      if (selectedItem !== '' && selectedDeveloper !== '' && selectedItemBrandName !== '' && selectedProjectOwner !== '') {
+        isValid = true;
+      }
+    }
+    else {
+
+      if (selectedDeveloper !== '' && selectedItemBrandName !== '' && selectedItem !== '') {
+        isValid = true;
+      }
+    }
+
+    if (isValid) {
       addDataToFirebaseDB(data, assignedItemDetailsRef).then((res) => {
         clearAllData();
       });
@@ -88,12 +123,28 @@ const AssignInventoryScreen = () => {
   const projectOwnersData = useSelector((state: RootState) => state.inventory.projectOwners);
   const developersData = useSelector((state: RootState) => state.inventory.developers);
   const clientsData = useSelector((state: RootState) => state.inventory.clients);
+  const simNumberData = useSelector((state: RootState) => state.inventory.simNumber);
+  const simCompNameData = useSelector((state: RootState) => state.inventory.simCompName);
+
 
   const createDropdownData = (data: object[], type: object[]) => {
     const temp = [];
-    data.map((element) => {
-      temp.push(element.name);
-    })
+
+    if (type !== 'simNumber' && type !== 'simCompName') {
+      data.map((element) => {
+        temp.push(element.name);
+      })
+    }
+    else if (type == 'simNumber') {
+      data.map((element) => {
+        temp.push(element.number);
+      })
+    }
+    else if (type == 'simCompName') {
+      data.map((element) => {
+        temp.push(element.sim_company_name);
+      })
+    }
 
     if (type == 'item') {
       setItemData(temp);
@@ -110,10 +161,12 @@ const AssignInventoryScreen = () => {
     else if (type == 'client') {
       setClientNameData(temp);
     }
-
-    // type = [...new Set(type)]
-
-
+    else if (type == 'simNumber') {
+      setSimNumberDropdownData(temp);
+    }
+    else if (type == 'simCompName') {
+      setSimCompNameDropdownData(temp);
+    }
   }
 
   const clearAllData = () => {
@@ -125,6 +178,8 @@ const AssignInventoryScreen = () => {
     setSelectedProjectOwner('');
     setIsDisable(false);
     setResetDropdown(!resetDropdown);
+    setSelectedSimNumber('');
+    setSelectedSimCompName('');
   }
 
   useEffect(() => {
@@ -161,6 +216,18 @@ const AssignInventoryScreen = () => {
     }
   }, [clientsData])
 
+  useEffect(() => {
+    if (clientsData.length > 0) {
+      createDropdownData(simNumberData, "simNumber");
+    }
+  }, [simNumberData])
+
+  useEffect(() => {
+    if (clientsData.length > 0) {
+      createDropdownData(simCompNameData, "simCompName");
+    }
+  }, [simCompNameData])
+
 
   const handleImageChange = (images: []) => {
     setSelectedImages(images);
@@ -173,28 +240,45 @@ const AssignInventoryScreen = () => {
         <h1 className={styles.title}>Assign Inventory</h1>
         <div className={styles.separator} />
         <div className={styles.dropDownContainer}>
-          <DropDownComponent label={'Item'} optionsData={itemData} resetSelectedValue = {resetDropdown} selectedValue={(value: string) => setSelectedItem(value)} />
+          <DropDownComponent label={'Item'} optionsData={itemData} resetSelectedValue={resetDropdown} selectedValue={(value: string) => setSelectedItem(value)} />
+        </div>
+
+        {selectedItem !== 'SIM' &&
+          <div className={styles.dropDownContainer}>
+            <DropDownComponent label={'Item Brand Name'} optionsData={itemBrandNameData} resetSelectedValue={resetDropdown} selectedValue={(value: string) => setSelectedItemBrandName(value)} />
+          </div>
+        }
+        <div className={styles.dropDownContainer}>
+          <DropDownComponent label={'Client Name'} optionsData={clientNameData} resetSelectedValue={resetDropdown} selectedValue={(value: string) => setSelectedClient(value)} />
         </div>
 
         <div className={styles.dropDownContainer}>
-          <DropDownComponent label={'Item Brand Name'} optionsData={itemBrandNameData} resetSelectedValue = {resetDropdown} selectedValue={(value: string) => setSelectedItemBrandName(value)} />
+          <DropDownComponent label={'Project Owner'} optionsData={projectOwnerNameData} resetSelectedValue={resetDropdown} selectedValue={(value: string) => setSelectedProjectOwner(value)} />
         </div>
 
         <div className={styles.dropDownContainer}>
-          <DropDownComponent label={'Client Name'} optionsData={clientNameData} resetSelectedValue = {resetDropdown} selectedValue={(value: string) => setSelectedClient(value)} />
+          <DropDownComponent label={'Developer'} optionsData={developerNameData} resetSelectedValue={resetDropdown} selectedValue={setSelectedDeveloper} />
         </div>
 
-        <div className={styles.dropDownContainer}>
-          <DropDownComponent label={'Project Owner'} optionsData={projectOwnerNameData} resetSelectedValue = {resetDropdown} selectedValue={(value: string) => setSelectedProjectOwner(value)} />
-        </div>
 
-        <div className={styles.dropDownContainer}>
-          <DropDownComponent label={'Developer'} optionsData={developerNameData}  resetSelectedValue = {resetDropdown}selectedValue={setSelectedDeveloper} />
-        </div>
+        {selectedItem == 'SIM' &&
+          <>
+            <div className={styles.dropDownContainer}>
+              <DropDownComponent label={'Sim Number'} optionsData={simNumberDropdownData} resetSelectedValue={resetDropdown} selectedValue={setSelectedSimNumber} />
+            </div>
+
+            <div className={styles.dropDownContainer}>
+              <DropDownComponent label={'Sim Company Name'} optionsData={simCompNameDropdownData} resetSelectedValue={resetDropdown} selectedValue={setSelectedSimCompName} />
+            </div>
+          </>
+        }
 
         <div className={styles.imagePickerContainer}>
           <MultipleImagePicker resetSelectedImages={resetDropdown} onPickedImageChanges={(images: []) => handleImageChange(images)} />
         </div>
+
+
+
 
         <div className={styles.saveButtonContainer} >
           <button disabled={isDisable} className={styles.saveButton} onClick={addDataToDB}>Save Data</button>
