@@ -4,7 +4,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 
 export default function DropDownComponent(props) {
 
-  const { label, optionsData, selectedValue, resetSelectedValue } = props;
+  const { label, optionsData, selectedValue, resetSelectedValue, isDisabled } = props;
 
   const [value, setValue] = useState<string | null>('Select');
   const [inputValue, setInputValue] = useState('');
@@ -31,6 +31,7 @@ export default function DropDownComponent(props) {
         options={optionsData}
         sx={{ width: '100%' }}
         renderInput={(params) => <TextField {...params} label={label} />}
+        disabled={isDisabled}
       />
     </div>
   );

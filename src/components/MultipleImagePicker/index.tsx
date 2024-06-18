@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { handleUpload } from '../../firebase';
 import styles from './styles.module.css'
 
-const MultipleImagePicker = ({ onPickedImageChanges = () => { }, resetSelectedImages }) => {
+const MultipleImagePicker = ({ onPickedImageChanges = () => { }, resetSelectedImages, isDisabled }) => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [images, setImages] = useState([]);
 
@@ -15,7 +15,7 @@ const MultipleImagePicker = ({ onPickedImageChanges = () => { }, resetSelectedIm
 
   useEffect(() => {
     setSelectedImages([]);
-    onPickedImageChanges([]);
+    setImages([]);
   }, [resetSelectedImages])
 
   const handleImageChange = async (event) => {
@@ -56,6 +56,7 @@ const MultipleImagePicker = ({ onPickedImageChanges = () => { }, resetSelectedIm
             />
             <button
               onClick={() => removeImage(index)}
+              disabled={isDisabled}
               style={{
                 position: 'absolute',
                 top: '5px',

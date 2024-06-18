@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './style.css';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
+import { Loader } from '../../components/Loader';
 
 const ScreenLoader = () => {
   const auth = getAuth();
@@ -29,8 +30,7 @@ const ScreenLoader = () => {
 
   return (
     <>
-      <h1>Screen Loader</h1>
-      {/* <button onClick={() => navigate("/SideNavBar")} className="btn">Go to SideNavBar</button> */}
+      <Loader/>
     </>
   );
 };

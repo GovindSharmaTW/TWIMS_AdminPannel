@@ -9,8 +9,7 @@ export interface InventoryState {
   developers: object,
   clients: object,
   assignedInventories: object,
-  simCompName: object,
-  simNumber: object
+  simDetails: object
 
 }
 
@@ -22,8 +21,7 @@ const initialState: InventoryState = {
   developers: [],
   clients: [],
   assignedInventories: [],
-  simCompName: [],
-  simNumber: []
+  simDetails: []
 }
 
 export const inventorySlice = createSlice({
@@ -49,11 +47,8 @@ export const inventorySlice = createSlice({
     addAssignedInventory: (state, action: PayloadAction<object>) => {
       state.assignedInventories = action.payload;
     },
-    addSimCompName: (state, action: PayloadAction<object>) => {
-      state.simCompName = action.payload;
-    },
-    addSimNumber: (state, action: PayloadAction<object>) => {
-      state.simNumber = action.payload;
+    addSimDetails: (state, action: PayloadAction<object>) => {
+      state.simDetails = action.payload;
     }
   },
 })
@@ -66,8 +61,7 @@ export const {
   addDeveloper,
   addClient,
   addAssignedInventory,
-  addSimCompName,
-  addSimNumber
+  addSimDetails
 } = inventorySlice.actions
 
 export default inventorySlice.reducer
