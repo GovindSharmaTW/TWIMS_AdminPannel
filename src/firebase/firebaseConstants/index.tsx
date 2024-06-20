@@ -5,6 +5,7 @@ const inventoryItemsBrandNameRef = '/InventoryItemBrandName';
 const clientsRef = '/Clients';
 const assignedItemDetailsRef = '/AssignedInventoryDetails';
 const simRef = '/simDetails';
+const branchRef = '/branch';
 
 export {
     projectOwnerRef,
@@ -13,5 +14,6 @@ export {
     inventoryItemsBrandNameRef,
     clientsRef,
     assignedItemDetailsRef,
-    simRef
+    simRef,
+    branchRef
 }

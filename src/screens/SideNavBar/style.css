@@ -19,6 +19,8 @@
     border-radius: 10px;
     justify-content: center;
     width: 100%;
+    font-size: 18px;
+    font-family: "Roboto", sans-serif;
 }
 
 .addButtonText {

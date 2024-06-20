@@ -70,6 +70,48 @@
     font-family: "Roboto", sans-serif;
 }
 
+.inputContainerStyle {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 7px;
+}
+
+.inputContainerStyle input{
+    padding: 7px;
+}
+
+.inputStyle{
+    display: flex;
+    flex-direction: row;
+    display: flex;
+    /* width: 100%; */
+    padding:2px;
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border :0.5px solid #2B2F38;
+    border-width: 1px;
+    border-radius: 5px;
+}
+
+.inputStyle input{
+    padding: 5px;
+}
+
+.inputStyle:has(input:focus){
+    border: 2px solid rgb(203, 140, 72);
+}
+.inputLabel{
+    color: #48505E;
+    /* position: absolute; */
+    /* bottom:0 */
+}
+.inputLabelContainer{
+    position: absolute;
+    /* top: 0; */
+}
+
 @media screen and (max-width:650px) {
 
     .secondaryContainer{

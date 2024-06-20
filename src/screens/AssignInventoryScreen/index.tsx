@@ -10,6 +10,7 @@ import 'react-image-picker-editor/dist/index.css'
 import MultipleImagePicker from '../../components/MultipleImagePicker';
 import { toast } from 'react-toastify';
 import { Loader } from '../../components/Loader';
+import FloatingLabelInput from '../../components/FloatingLabelInput';
 const AssignInventoryScreen = () => {
   const [itemData, setItemData] = useState([]);
   const [itemBrandNameData, setItemBrandNameData] = useState([]);
@@ -17,6 +18,7 @@ const AssignInventoryScreen = () => {
   const [simDropdownData, setSimDropdownData] = useState([]);
   const [projectOwnerNameData, setProjectOwnerNameData] = useState([]);
   const [developerNameData, setDeveloperNameData] = useState([]);
+  const [branchNameData, setBranchNameData] = useState([]);
 
   const [selectedItem, setSelectedItem] = useState('');
   const [selectedItemBrandName, setSelectedItemBrandName] = useState('');
@@ -27,6 +29,8 @@ const AssignInventoryScreen = () => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [isDisable, setIsDisable] = useState(false);
   const [resetDropdown, setResetDropdown] = useState(false);
+  const [itemSerialNum, setItemSerialNum] = useState('');
+  const [selectedBranch, setSelectedBranch] = useState('');
 
 
   const addDataToDB = async () => {
@@ -40,6 +44,8 @@ const AssignInventoryScreen = () => {
       clientName: selectedClient,
       projectOwnerName: selectedProjectOwner,
       developer: selectedDeveloper,
+      branch:selectedBranch,
+      item_serial_num:itemSerialNum,
       assignedDate: getCurrentDate(),
       imageUri: [],
     };
@@ -109,6 +115,7 @@ const AssignInventoryScreen = () => {
   const developersData = useSelector((state: RootState) => state.inventory.developers);
   const clientsData = useSelector((state: RootState) => state.inventory.clients);
   const simData = useSelector((state: RootState) => state.inventory.simDetails);
+  const branchData = useSelector((state: RootState) => state.inventory.branchNames);
 
 
   const createDropdownData = (data: object[], type: object[]) => {
@@ -119,6 +126,12 @@ const AssignInventoryScreen = () => {
         temp.push(element.number);
       })
     }
+    else if (type == 'branch') {
+      data.map((element) => {
+        temp.push(element.branch_name);
+      })
+    }
+
     else {
       data.map((element) => {
         temp.push(element.name);
@@ -143,6 +156,9 @@ const AssignInventoryScreen = () => {
     else if (type == 'sim') {
       setSimDropdownData(temp);
     }
+    else if (type == 'branch') {
+      setBranchNameData(temp);
+    }
   }
 
   const clearAllData = () => {
@@ -155,6 +171,7 @@ const AssignInventoryScreen = () => {
     setIsDisable(false);
     setResetDropdown(!resetDropdown);
     setSelectedSimNumber('');
+    setItemSerialNum('');
   }
 
   useEffect(() => {
@@ -198,6 +215,12 @@ const AssignInventoryScreen = () => {
     }
   }, [simData])
 
+  useEffect(() => {
+    if (branchData.length > 0) {
+      createDropdownData(branchData, "branch");
+    }
+  }, [branchData])
+
 
   const handleImageChange = (images: []) => {
     setSelectedImages(images);
@@ -222,6 +245,13 @@ const AssignInventoryScreen = () => {
             <DropDownComponent label={'Item Brand Name'} optionsData={itemBrandNameData} isDisabled={isDisable} resetSelectedValue={resetDropdown} selectedValue={(value: string) => setSelectedItemBrandName(value)} />
           </div>
         }
+        {/* <div className={styles.inputContainerStyle}>
+          <div  className={styles.inputLabelContainer}>
+            <label className={styles.inputLabel}>Item Serial no.</label>
+            </div>
+            <input type="text" placeholder='Enter Serial no.' className={styles.inputStyle} onChange={(e) => setItemSerialNum(e.target.value)} value={itemSerialNum} />
+          </div> */}
+
         <div className={styles.dropDownContainer}>
           <DropDownComponent label={'Client Name'} optionsData={clientNameData} isDisabled={isDisable} resetSelectedValue={resetDropdown} selectedValue={(value: string) => setSelectedClient(value)} />
         </div>
@@ -234,6 +264,10 @@ const AssignInventoryScreen = () => {
           <DropDownComponent label={'Developer'} optionsData={developerNameData} isDisabled={isDisable} resetSelectedValue={resetDropdown} selectedValue={setSelectedDeveloper} />
         </div>
 
+        <div className={styles.dropDownContainer}>
+          <DropDownComponent label={'Branch'} optionsData={branchNameData} isDisabled={isDisable} resetSelectedValue={resetDropdown} selectedValue={setSelectedBranch} />
+        </div>
+
 
         {selectedItem == 'SIM' &&
           <>
@@ -244,12 +278,11 @@ const AssignInventoryScreen = () => {
           </>
         }
 
+        <FloatingLabelInput label={'Item Serial No.'} onChange={setItemSerialNum} />
+
         <div className={styles.imagePickerContainer}>
           <MultipleImagePicker isDisabled={isDisable} resetSelectedImages={resetDropdown} onPickedImageChanges={(images: []) => handleImageChange(images)} />
         </div>
-
-
-
 
         <div className={styles.saveButtonContainer} >
           <button disabled={isDisable} className={styles.saveButton} onClick={addDataToDB}>Save Data</button>

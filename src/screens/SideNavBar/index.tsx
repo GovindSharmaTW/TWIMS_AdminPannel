@@ -27,10 +27,10 @@ import AssignInventoryScreen from '../AssignInventoryScreen';
 import TableComponent from '../../components/TableComponent';
 import ProfilePage from '../profile';
 import { addDataToFirebaseDB, updateFirebaseDBData } from '../../firebase';
-import { assignedItemDetailsRef, clientsRef, developerRef, inventoryItemsBrandNameRef, inventoryItemsRef, projectOwnerRef, simRef } from '../../firebase/firebaseConstants';
+import { assignedItemDetailsRef, branchRef, clientsRef, developerRef, inventoryItemsBrandNameRef, inventoryItemsRef, projectOwnerRef, simRef } from '../../firebase/firebaseConstants';
 import './style.css'
 import { useDispatch } from 'react-redux';
-import { addBrandName, addClient, addDeveloper, addInventoryItem, addProjectOwner, addSimDetails } from '../../redux/inventorySlice';
+import { addBranchName, addBrandName, addClient, addDeveloper, addInventoryItem, addProjectOwner, addSimDetails } from '../../redux/inventorySlice';
 import { checkIsObjectEmpty } from '../../utils';
 import ModalComponent from '../../components/ModalComponent';
 import { getDatabase, ref, onValue, set, push, update } from "firebase/database";
@@ -120,6 +120,7 @@ export default function SideNavBar() {
   const [brandNameTableData, setBrandNameTableData] = React.useState([]);
   const [projectOwnerTableData, setProjectOwnerTableData] = React.useState([]);
   const [developerTableData, setDeveloperTableData] = React.useState([]);
+  const [branchTableData, setBranchTableData] = React.useState([]);
   const [assignedInvTableData, setAssignedInvTableData] = React.useState([]);
   const [simTableData, setSimTableData] = React.useState([]);
 
@@ -140,6 +141,10 @@ export default function SideNavBar() {
   const [devPhone, setDevPhone] = React.useState('');
   const [simNumber, setSimNumber] = React.useState('');
   const [simCompName, setSimCompName] = React.useState('');
+  const [branchName, setBranchName] = React.useState('');
+  const [branchCity, setBranchCity] = React.useState('');
+  const [branchState, setBranchState] = React.useState('');
+
   const [updateData, setUpdateData] = React.useState({});
   const [isUpdate, setIsUpdate] = React.useState(false);
   const [isEditable, setIsEditable] = React.useState(false);
@@ -176,7 +181,7 @@ export default function SideNavBar() {
         tempData.push({
           S_No: index + 1, ass_item: data[key].item, item_image_urls: data[key].imageUri, brand_name: data[key].itemBrandName,
           from_client: data[key].fromClient, client_name: data[key].clientName, pro_owner: data[key].projectOwnerName,
-          developer: data[key].developer, assigned_date: data[key].assignedDate, id: key.toString()
+          developer: data[key].developer, assigned_date: data[key].assignedDate,branch: data[key].branch, item_serial_num:data[key].item_serial_num, id: key.toString()
         });
       }
       else if (type === 'client') {
@@ -184,6 +189,9 @@ export default function SideNavBar() {
       }
       else if (type === 'sim') {
         tempData.push({ S_No: index + 1, number: data[key].simNumber, id: key.toString(), sim_company_name: data[key].simCompName });
+      }
+      else if (type === 'branch') {
+        tempData.push({ S_No: index + 1, branch_name: data[key].branch_name, branch_state: data[key].branch_state, branch_city: data[key].branch_city, id: key.toString()});
       }
     })
 
@@ -213,6 +221,10 @@ export default function SideNavBar() {
     else if (type === 'sim') {
       setSimTableData(tempData);
       dispatch(addSimDetails(tempData));
+    }
+    else if (type === 'branch') {
+      setBranchTableData(tempData);
+      dispatch(addBranchName(tempData));
     }
   }
 
@@ -268,20 +280,19 @@ export default function SideNavBar() {
       }
     });
 
-    // const simCompNameDBRef = ref(db, simCompNameRef);
-    // const unsubscribeSimCompNameRef = onValue(simCompNameDBRef, (snapshot) => {
-    //   const data = snapshot.val();
-    //   if (data) {
-    //     createTableData(data, 'simCompName');
-    //   }
-    // });
-
     const simDBRef = ref(db, simRef);
     const unsubscribeSimRef = onValue(simDBRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
         createTableData(data, 'sim');
+      }
+    });
 
+    const branchDBRef = ref(db, branchRef);
+    const unsubscribeBranchRef = onValue(branchDBRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        createTableData(data, 'branch');
       }
     });
 
@@ -293,6 +304,7 @@ export default function SideNavBar() {
       unsubscribeDevRef();
       unsubscribeAssignedDataRef();
       unsubscribeSimRef();
+      unsubscribeBranchRef();
     }
   }, [])
 
@@ -384,6 +396,10 @@ export default function SideNavBar() {
     setItemQty(0);
     setSimCompName('');
     setSimNumber('');
+    setBranchName('');
+    setBranchState('');
+    setBranchCity('');
+    
   }
 
 
@@ -447,6 +463,15 @@ export default function SideNavBar() {
         simCompName: simCompName
       }
       ref = simRef
+    }
+    else if (type == 'branch') {
+      data =
+      {
+        branch_name: branchName,
+        branch_city:branchCity,
+        branch_state : branchState
+      }
+      ref = branchRef
     }
 
     if (operationType == 'update') {
@@ -555,6 +580,9 @@ export default function SideNavBar() {
     else if (modalChildType == 'Sim List') {
       return (addSimModalChildComponent())
     }
+    else if (modalChildType == 'Branch Name List') {
+      return (addBranchModalChildComponent())
+    }
   }
 
   const addItemModalChildComponent = () => {
@@ -580,9 +608,9 @@ export default function SideNavBar() {
           <input name="myInput" className='modelInputStyle' onChange={(e) => { setItemQty(e.target.value), setIsEditable(true) }} value={itemQty} placeholder='Enter item name' />
         </div>
 
-        <div className='addButtonSecContainer'>
-          <button disabled={isDisable} className='buttonText' onClick={() => addDataToDB('item', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
-        </div>
+        {/* <div className='addButtonSecContainer'> */}
+          <button className='addButtonSecContainer'  disabled={isDisable} onClick={() => addDataToDB('item', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
+        {/* </div> */}
 
       </div>
     )
@@ -669,6 +697,43 @@ export default function SideNavBar() {
 
         <div className='addButtonSecContainer'>
           <button disabled={isDisable} className='buttonText' onClick={() => addDataToDB('sim', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
+        </div>
+
+      </div>
+    )
+  }
+
+  const addBranchModalChildComponent = () => {
+    if (!checkIsObjectEmpty(updateData) && !isEditable) {
+      setBranchName(updateData.branch_name);
+      setBranchState(updateData.branch_state);
+      setBranchCity(updateData.branch_city);
+    }
+    return (
+      <div>
+        <div className='modellnputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Branch Name :
+          </label>
+          <input name="myInput" className='modelInputStyle' onChange={(e) => {setBranchName(e.target.value), setIsEditable(true) }} value={branchName} placeholder='Enter branch name' />
+        </div>
+
+        <div className='modellnputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Branch State Name :
+          </label>
+          <input name="myInput" className='modelInputStyle' onChange={(e) => {setBranchState(e.target.value), setIsEditable(true) }} value={branchState} placeholder='Enter branch state' />
+        </div>
+
+        <div className='modellnputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Branch City Name :
+          </label>
+          <input name="myInput" className='modelInputStyle' onChange={(e) => {setBranchCity(e.target.value), setIsEditable(true) }} value={branchCity} placeholder='Enter branch city' />
+        </div>
+
+        <div className='addButtonSecContainer'>
+          <button disabled={isDisable} className='buttonText' onClick={() => addDataToDB('branch', isUpdate ? 'update' : 'add')}>{isUpdate ? 'Update Data' : 'Add Data'}</button>
         </div>
 
       </div>
@@ -839,6 +904,7 @@ export default function SideNavBar() {
           <>
             <TableComponent data={projectOwnerTableData} showActionButtons={true} tableTitle={'Project-Owner List'} toggleModal={handleModalClose} showAddButton={true} />
             <TableComponent data={developerTableData} showActionButtons={true} tableTitle={'Developer List'} toggleModal={handleModalClose} showAddButton={true} />
+            <TableComponent data={branchTableData} showActionButtons={true} tableTitle={'Branch Name List'} toggleModal={handleModalClose} showAddButton={true} />
           </>
         }
 

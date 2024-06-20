@@ -7,7 +7,7 @@ import { useMediaQuery } from '@mui/material';
 import { useEffect, useState } from 'react';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { assignedItemDetailsRef, clientsRef, developerRef, inventoryItemsBrandNameRef, inventoryItemsRef, projectOwnerRef,simRef } from '../../firebase/firebaseConstants';
+import { assignedItemDetailsRef, branchRef, clientsRef, developerRef, inventoryItemsBrandNameRef, inventoryItemsRef, projectOwnerRef, simRef } from '../../firebase/firebaseConstants';
 import { deleteDataFromFirebaseDB } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
 import ModalComponent from '../ModalComponent';
@@ -75,6 +75,9 @@ const TableComponent = (props: any) => {
         }
         else if (tableType == 'Sim List') {
             dbRef = simRef;
+        }
+        else if (tableType == 'Branch Name List') {
+            dbRef = branchRef;
         }
 
         deleteDataFromFirebaseDB(dbRef, id);
