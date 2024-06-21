@@ -87,13 +87,13 @@ const AssignInventoryScreen = () => {
       }
     }
     else if (selectedClient !== '') {
-      if (selectedItem !== '' && selectedDeveloper !== '' && selectedItemBrandName !== '' && selectedProjectOwner !== '') {
+      if (selectedItem !== '' && selectedDeveloper !== '' && selectedItemBrandName !== '' && selectedProjectOwner !== '' && itemSerialNum !== '') {
         isValid = true;
       }
     }
     else {
 
-      if (selectedDeveloper !== '' && selectedItemBrandName !== '' && selectedItem !== '') {
+      if (selectedDeveloper !== '' && selectedItemBrandName !== '' && selectedItem !== '' && itemSerialNum !== '') {
         isValid = true;
       }
     }
@@ -278,7 +278,7 @@ const AssignInventoryScreen = () => {
           </>
         }
 
-        <FloatingLabelInput label={'Item Serial No.'} onChange={setItemSerialNum} />
+        <FloatingLabelInput label={'Item Serial No.'} onChange={setItemSerialNum} reset={resetDropdown}/>
 
         <div className={styles.imagePickerContainer}>
           <MultipleImagePicker isDisabled={isDisable} resetSelectedImages={resetDropdown} onPickedImageChanges={(images: []) => handleImageChange(images)} />

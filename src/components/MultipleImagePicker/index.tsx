@@ -45,6 +45,7 @@ const MultipleImagePicker = ({ onPickedImageChanges = () => { }, resetSelectedIm
         multiple
         accept="image/*"
         onChange={handleImageChange}
+        className={styles.inputStyle}
       />
       <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px' }}>
         {selectedImages.map((image, index) => (
