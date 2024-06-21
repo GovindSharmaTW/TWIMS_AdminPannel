@@ -48,7 +48,7 @@ const MultipleImagePicker = ({ onPickedImageChanges = () => { }, resetSelectedIm
         className={styles.inputStyle}
       />
       <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px' }}>
-        {selectedImages.map((image, index) => (
+        {selectedImages?.map((image, index) => (
           <div key={index} style={{ position: 'relative', margin: '10px' }}>
             <img
               src={image}

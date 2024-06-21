@@ -278,7 +278,10 @@ const AssignInventoryScreen = () => {
           </>
         }
 
+        <div className={styles.floatingInputContainer}>
         <FloatingLabelInput label={'Item Serial No.'} onChange={setItemSerialNum} reset={resetDropdown}/>
+        </div>
+
 
         <div className={styles.imagePickerContainer}>
           <MultipleImagePicker isDisabled={isDisable} resetSelectedImages={resetDropdown} onPickedImageChanges={(images: []) => handleImageChange(images)} />

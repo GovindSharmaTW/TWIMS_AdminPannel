@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './style.css'
+import styles from './styles.module.css'
 
 const FloatingLabelInput = (props) => {
   const { label, onChange, reset } = props;
@@ -15,22 +15,18 @@ const FloatingLabelInput = (props) => {
   }, [reset])
 
   return (
-    <div className='baseInputContainer'>
-      <label htmlFor="item" className="label">
+    <div className={styles.inputContainer}>
+      <input
+        className={styles.inputStyle}
+        onChange={handleChange}
+        placeholder='Enter serial no.'
+        value={value}
+      />
+      <label
+        className={styles.labelStyle}
+      >
         {label}
       </label>
-
-      <div className="input-container">
-        <input
-          type="text"
-          id="item"
-          value={value}
-          onChange={handleChange}
-          className={`inputStyle ${value && 'not-empty'}`}
-          placeholder='Enter item serial no.'
-        />
-
-      </div>
     </div>
   );
 };

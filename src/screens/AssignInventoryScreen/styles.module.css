@@ -111,6 +111,10 @@
     position: absolute;
     /* top: 0; */
 }
+.floatingInputContainer{
+    margin-top: 20px;
+    width: 100%;
+}
 
 @media screen and (max-width:650px) {
 
