@@ -71,6 +71,7 @@
 .tableStyle {
     margin-top: 100px;
     justify-content: center;
+    width: fit-content;
 }
 
 .deleteIcon {
