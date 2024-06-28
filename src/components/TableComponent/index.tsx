@@ -115,7 +115,7 @@ const TableComponent = (props: any) => {
     }
 
     return (
-        <div className={styles.tableStyle}>
+        <div className={data && data.length > 0 ? styles.tableStyle : styles.emptyTableStyle }>
 
             <ModalComponent childComponent={deleteItemModalChildComponent} openModal={isModalVisible} handleModalClose={handleModalClose} />
 

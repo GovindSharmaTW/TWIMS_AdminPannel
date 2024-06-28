@@ -128,7 +128,11 @@ export default function SideNavBar() {
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const [modalChildType, setModalChildType] = React.useState('');
   const [item, setItem] = React.useState('');
+  const [itemPrice, setItemPrice] = React.useState('');
+  const [itemConfiguration, setItemConfiguration] = React.useState('');
   const [itemQty, setItemQty] = React.useState('0');
+  const [itemBrand, setItemBrand] = React.useState('');
+  const [itemSerialNum, setItemSerialNum] = React.useState('');
   const [clientName, setClientName] = React.useState('');
   const [clientEmail, setClientEmail] = React.useState('');
   const [clientPhone, setClientPhone] = React.useState('');
@@ -165,7 +169,7 @@ export default function SideNavBar() {
 
     dataKeys.map((key, index) => {
       if (type === 'inventoryItem') {
-        tempData.push({ name: data[key].itemName, qty: data[key].qty, image: inventory, id: key.toString() });
+        tempData.push({ name: data[key].itemName, price : data[key].itemPrice, brand : data[key].itemBrand, configuration : data[key].itemConfiguration, item_serial_number : data[key].itemSerialNumber, id: key.toString() });
       }
       else if (type === 'brandName') {
         tempData.push({ code: `#000${index + 1}`, name: data[key].brandName, id: key.toString() });
@@ -181,7 +185,7 @@ export default function SideNavBar() {
         tempData.push({
           S_No: index + 1, ass_item: data[key].item, item_image_urls: data[key].imageUri, brand_name: data[key].itemBrandName,
           from_client: data[key].fromClient, client_name: data[key].clientName, pro_owner: data[key].projectOwnerName,
-          developer: data[key].developer, assigned_date: data[key].assignedDate,branch: data[key].branch, item_serial_num:data[key].item_serial_num, id: key.toString()
+          developer: data[key].developer, assigned_date: data[key].assignedDate,branch: data[key].branch, item_serial_number:data[key].item_serial_num, id: key.toString()
         });
       }
       else if (type === 'client') {
@@ -334,7 +338,7 @@ export default function SideNavBar() {
 
         const checkItem = user.assignedItems.some(assItem => assItem === item.ass_item);
         if (!checkItem) {
-          user.assignedItems.push({ item: item.ass_item, ass_date: item.assigned_date, item_image_urls: item.item_image_urls, client: item.client_name, brand: item.brand_name, project_owner: item.pro_owner });
+          user.assignedItems.push({ item: item.ass_item, ass_date: item.assigned_date, item_image_urls: item.item_image_urls, client: item.client_name, brand: item.brand_name, project_owner: item.pro_owner, item_serial_num : item.item_serial_number });
 
           user.totalAssignedItem += 1;
         }
@@ -399,7 +403,10 @@ export default function SideNavBar() {
     setBranchName('');
     setBranchState('');
     setBranchCity('');
-    
+    setItemPrice('');
+    setItemConfiguration('');
+    setItemBrand('');
+    setItemSerialNum('');
   }
 
 
@@ -412,7 +419,10 @@ export default function SideNavBar() {
       data =
       {
         itemName: item,
-        qty: itemQty
+        itemConfiguration : itemConfiguration,
+        itemPrice : itemPrice,
+        itemBrand : itemBrand,
+        itemSerialNumber : itemSerialNum
       }
       ref = inventoryItemsRef
     }
@@ -589,7 +599,10 @@ export default function SideNavBar() {
 
     if (!checkIsObjectEmpty(updateData) && !isEditable) {
       setItem(updateData.name);
-      setItemQty(updateData.qty);
+      setItemConfiguration(updateData.configuration);
+      setItemPrice(updateData.price);
+      setItemBrand(updateData.brand);
+      setItemSerialNum(updateData.item_serial_number);
     }
 
     return (
@@ -601,11 +614,39 @@ export default function SideNavBar() {
           <input name="myInput" className='modelInputStyle' onChange={(e) => { setItem(e.target.value), setIsEditable(true) }} value={item} placeholder='Enter item name' />
         </div>
 
-        <div className='modellnputContainerStyle'>
+        {/* <div className='modellnputContainerStyle'>
           <label className='inputLabelStyle'>
             Qty:
           </label>
           <input name="myInput" className='modelInputStyle' onChange={(e) => { setItemQty(e.target.value), setIsEditable(true) }} value={itemQty} placeholder='Enter item name' />
+        </div> */}
+
+        <div className='modellnputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Brand:
+          </label>
+          <input name="myInput" className='modelInputStyle' onChange={(e) => { setItemBrand(e.target.value), setIsEditable(true) }} value={itemBrand} placeholder='Enter item brand name' />
+        </div>
+
+        <div className='modellnputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Price:
+          </label>
+          <input name="myInput" className='modelInputStyle' onChange={(e) => { setItemPrice(e.target.value), setIsEditable(true) }} value={itemPrice} placeholder='Enter item price' />
+        </div>
+
+        <div className='modellnputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Configuration:
+          </label>
+          <input name="myInput"  className='modelInputStyle' onChange={(e) => { setItemConfiguration(e.target.value), setIsEditable(true) }} value={itemConfiguration} placeholder='Enter item configuration' />
+        </div>
+
+        <div className='modellnputContainerStyle'>
+          <label className='inputLabelStyle'>
+            Serial No.:
+          </label>
+          <input name="myInput"  className='modelInputStyle' onChange={(e) => { setItemSerialNum(e.target.value), setIsEditable(true) }} value={itemSerialNum} placeholder='Enter item serial no.' />
         </div>
 
         {/* <div className='addButtonSecContainer'> */}

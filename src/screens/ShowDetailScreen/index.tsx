@@ -2,12 +2,15 @@ import styles from './styles.module.css';
 import inventory from '../../assets/images/inventory.jpg';
 import { useLocation, useParams } from 'react-router-dom';
 import { checkIsEmpty } from '../../utils';
+import { useSelector } from 'react-redux';
 
 const ShowDetailsScreen
   = () => {
-    // const data = { name: "Govind Sharma", total_ass_item_count: 10, total_ass_project: 3, project: ['Karigar', 'plateRate', 'CanDid'], ass_items: ['laptop', 'Connector', 'Mouse'] }
     const location = useLocation();
     const { data } = location.state;
+
+    const inventoryItemData = useSelector((state: RootState) => state.inventory.inventoryItems);
+
 
     return (
       <div className={styles.baseContainer}>
@@ -16,6 +19,8 @@ const ShowDetailsScreen
 
         <div className={styles.cardContainer}>
           {data.ass_items.map((item: object) => {
+
+            const itemData = inventoryItemData.find((element) => element.item_serial_number === item.item_serial_num);
 
             return (
               <div className={styles.dataContainer}>
@@ -37,6 +42,37 @@ const ShowDetailsScreen
                       <h1 className={styles.subHeading}>{item.brand}</h1>
                     </div>
                   }
+
+                  <div className={styles.textContainer}>
+                    <h1 className={styles.heading}>Item Serial No. : </h1>
+                    <h1 className={styles.subHeading}>{item.item_serial_num}</h1>
+                  </div>
+
+                  {
+                    itemData &&
+
+                    <>
+                      <div className={styles.textContainer}>
+                        <h1 className={styles.heading}>Price : </h1>
+                        <h1 className={styles.subHeading}>
+                          {itemData && itemData.price}
+                        </h1>
+                      </div>
+
+                      <div className={styles.textContainer}>
+                        <h1 className={styles.heading}>Configuration : </h1>
+                        <h1 className={styles.subHeading}>
+                          {itemData && itemData.configuration}
+                        </h1>
+                      </div>
+                    </>
+
+
+                  }
+
+
+
+
 
                   <div className={styles.textContainer}>
                     <h1 className={styles.heading}>Assigned Date : </h1>

@@ -19,6 +19,7 @@ const AssignInventoryScreen = () => {
   const [projectOwnerNameData, setProjectOwnerNameData] = useState([]);
   const [developerNameData, setDeveloperNameData] = useState([]);
   const [branchNameData, setBranchNameData] = useState([]);
+  const [itemSerialNumData, setItemSerialNumData] = useState([]);
 
   const [selectedItem, setSelectedItem] = useState('');
   const [selectedItemBrandName, setSelectedItemBrandName] = useState('');
@@ -44,8 +45,8 @@ const AssignInventoryScreen = () => {
       clientName: selectedClient,
       projectOwnerName: selectedProjectOwner,
       developer: selectedDeveloper,
-      branch:selectedBranch,
-      item_serial_num:itemSerialNum,
+      branch: selectedBranch,
+      item_serial_num: itemSerialNum,
       assignedDate: getCurrentDate(),
       imageUri: [],
     };
@@ -131,7 +132,11 @@ const AssignInventoryScreen = () => {
         temp.push(element.branch_name);
       })
     }
-
+    else if (type == 'serial_num') {
+      data.map((element) => {
+        temp.push(element.item_serial_number);
+      })
+    }
     else {
       data.map((element) => {
         temp.push(element.name);
@@ -159,6 +164,9 @@ const AssignInventoryScreen = () => {
     else if (type == 'branch') {
       setBranchNameData(temp);
     }
+    else if (type == 'serial_num') {
+      setItemSerialNumData(temp);
+    }
   }
 
   const clearAllData = () => {
@@ -175,6 +183,10 @@ const AssignInventoryScreen = () => {
   }
 
   useEffect(() => {
+    if (inventoryItemData.length > 0) {
+      createDropdownData(inventoryItemData, "item");
+      createDropdownData(inventoryItemData, "serial_num");
+    }
     if (inventoryItemData.length > 0) {
       createDropdownData(inventoryItemData, "item");
     }
@@ -278,8 +290,12 @@ const AssignInventoryScreen = () => {
           </>
         }
 
-        <div className={styles.floatingInputContainer}>
-        <FloatingLabelInput label={'Item Serial No.'} onChange={setItemSerialNum} reset={resetDropdown}/>
+        {/* <div className={styles.floatingInputContainer}>
+          <FloatingLabelInput label={'Item Serial No.'} onChange={setItemSerialNum} reset={resetDropdown} />
+        </div> */}
+
+        <div className={styles.dropDownContainer}>
+          <DropDownComponent label={'Item Serial No.'} optionsData={itemSerialNumData} isDisabled={isDisable} resetSelectedValue={resetDropdown} selectedValue={setItemSerialNum} />
         </div>
 
 
