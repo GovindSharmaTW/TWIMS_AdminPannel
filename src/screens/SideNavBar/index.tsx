@@ -185,7 +185,7 @@ export default function SideNavBar() {
         tempData.push({
           S_No: index + 1, ass_item: data[key].item, item_image_urls: data[key].imageUri, brand_name: data[key].itemBrandName,
           from_client: data[key].fromClient, client_name: data[key].clientName, pro_owner: data[key].projectOwnerName,
-          developer: data[key].developer, assigned_date: data[key].assignedDate,branch: data[key].branch, item_serial_number:data[key].item_serial_num, id: key.toString()
+          developer: data[key].developer, assigned_date: data[key].assignedDate,branch: data[key].branch, item_serial_number:data[key].item_serial_num, id: key.toString(), sim_number : data[key].simNumber
         });
       }
       else if (type === 'client') {

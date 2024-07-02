@@ -145,7 +145,7 @@ const TableComponent = (props: any) => {
                                     {Object.keys(val)?.map((key) => {
                                         return (
                                             key !== 'image' && key !== 'id' && key !== 'item_image_urls' && key !== 'client_name' && key !== 'ass_items' &&
-                                            <h1 className={styles.tableData} >{val[key].toString() == '' ? "-" : val[key].toString()}</h1>
+                                            <h1 className={styles.tableData} >{(val[key] == '' || val[key] == undefined ) ? "-" : val[key].toString()}</h1>
                                         )
                                     })}
 
